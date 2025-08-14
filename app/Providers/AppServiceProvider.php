@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use Illuminate\Auth\Middleware\Authenticate;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +23,20 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RedirectIfAuthenticated::redirectUsing(function ($request) {
+            if ($request->routeIs('cashier.*')) {
+                return route('cashier.dashboard');
+            } elseif ($request->routeIs('customer.*')) {
+                return route('customer.profile');
+            }
+        });
+
+        Authenticate::redirectUsing(function (Request $request) {
+            if ($request->routeIs('cashier.*')) {
+                return route('cashier.login');
+            } elseif ($request->routeIs('customer.*')) {
+                return route('customer.login');
+            }
+        });
     }
 }
