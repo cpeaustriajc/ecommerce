@@ -48,7 +48,7 @@ class Order extends Model
 
     public function recalculateTotal()
     {
-        $this->loadMissing('items');
+        $this->load('items');
         $total = $this->items->sum(fn($item) => $item->pivot->quantity * $item->pivot->price);
         $this->update(['total' => $total]);
     }

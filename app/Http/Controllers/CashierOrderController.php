@@ -49,7 +49,7 @@ class CashierOrderController extends Controller
         $this->authorize('create', Order::class);
         $cashier = $request->user('cashier');
 
-        $customer = $request->validated('customerId');
+        $customer = $request->validated('customer_id');
         $status = OrderStatus::from($request->validated('status'));
 
         DB::transaction(function () use ($request, $cashier, $customer, $status) {
