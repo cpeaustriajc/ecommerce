@@ -1,8 +1,8 @@
 import type { Config } from 'ziggy-js';
 
 export interface Auth {
-    customer: Customer;
-    cashier: Cashier;
+    customer?: Customer;
+    cashier?: Cashier;
 }
 
 export interface SharedData {
@@ -53,15 +53,16 @@ type OrderItem = {
 
 type Order = {
     id: number;
-    status: string;
+    status: OrderStatus;
     total: number;
     created_at: string;
     items: OrderItem[];
 };
 
-type OrderListItem = {
+export interface OrderListItem {
     id: number;
     status: OrderStatus;
+    customer?: { id: number; name: string } | null;
     total: number;
     created_at: string;
     items?: Array<{
@@ -72,4 +73,10 @@ type OrderListItem = {
             price: number;
         };
     }>;
-};
+}
+
+export interface Paginated<T> {
+    data: T[];
+    links: { url: string | null; label: string; active: boolean }[];
+    meta?: { current_page?: number; last_page?: number; per_page?: number; total?: number };
+}

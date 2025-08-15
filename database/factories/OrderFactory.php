@@ -22,10 +22,12 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-            'customer_id' => Customer::factory(),
-            'cashier_id' => Cashier::factory(),
+                'customer_id' => Customer::query()->inRandomOrder()->value('id') ?: Customer::factory()->create()->id,
+                'cashier_id' => Cashier::query()->inRandomOrder()->value('id') ?: Cashier::factory()->create()->id,
             'status' => $this->faker->randomElement(array_column(OrderStatus::cases(), 'value')),
             'total' => $this->faker->randomFloat(2, 10, 1000), // Random total between 10 and 1000
+            'created_at' => $this->faker->dateTimeBetween('-3 months', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-3 months', 'now'),
         ];
     }
 
@@ -50,6 +52,15 @@ class OrderFactory extends Factory
             $order->load('items');
             $total = $order->items->sum(fn ($i) => $i->pivot->quantity * $i->pivot->price);
             $order->update(['total' => $total]);
+        });
+    }
+
+    public function createdBetween(string $start, string $end)
+    {
+        return $this->state(function (array $attributes) use ($start, $end) {
+            $dateTime = $this->faker->dateTimeBetween($start, $end);
+
+            return ['created_at' => $dateTime, 'updated_at' => $dateTime];
         });
     }
 }

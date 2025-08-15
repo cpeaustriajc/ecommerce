@@ -11,9 +11,25 @@ class StorefrontController extends Controller
 {
     public function index(Request $request): Response
     {
-        $items = Item::query()->whereMonth('created_at', now()->month)->get();
+        $perPage = (int) $request->input('per_page', 10);
+        $paginator = Item::query()
+            ->whereMonth('created_at', now()->month)
+            ->orderByDesc('created_at')
+            ->paginate($perPage)
+            ->withQueryString();
 
-        return Inertia::render('storefront', compact('items'));
+        $data = $paginator->toArray();
+
+        return Inertia::render('storefront', [
+            'items' => $data['data'],
+            'links' => $data['links'],
+            'meta' => [
+                'current_page' => $data['current_page'],
+                'last_page' => $data['last_page'],
+                'per_page' => $data['per_page'],
+                'total' => $data['total'],
+            ],
+        ]);
     }
 
     public function show(Item $item): Response

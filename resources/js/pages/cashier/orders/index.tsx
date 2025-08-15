@@ -1,4 +1,15 @@
-import { Link } from '@inertiajs/react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { PaginationFromLaravel } from '@/components/ui/pagination';
+import { TableHead, TableRow } from '@/components/ui/table';
+import { columns } from './columns';
+import DataTable from './data-table';
+import { ArrowUpDown } from 'lucide-react';
+import DashboardLayout from '@/layouts/dashboard-layout';
+import { Link, router, usePage } from '@inertiajs/react';
+import { Search } from 'lucide-react';
+import { useState } from 'react';
 
 type OrderStatus = 'pending' | 'completed' | 'cancelled';
 
@@ -20,50 +31,100 @@ type Pagination<T> = {
     links: { url: string | null; label: string; active: boolean }[];
 };
 
-export default function CashierOrdersIndex({ orders }: { orders: Pagination<OrderListItem> }) {
-    return (
-        <div className="p-4">
-            <div className="mb-4 flex items-center justify-between">
-                <h1 className="text-2xl font-bold">Orders</h1>
-                <Link href="/cashier/orders/create" className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
-                    New Order
-                </Link>
-            </div>
+export default function CashierOrdersIndex({ orders, filters }: { orders: Pagination<OrderListItem>; filters?: { q?: string; sort?: string; direction?: string } }) {
+    const page = usePage();
+    const currentUrl = page.url || window.location.pathname;
+    const [searchTerm, setSearchTerm] = useState(filters?.q ?? '');
 
-            <table className="w-full border">
-                <thead>
-                    <tr className="bg-gray-50">
-                        <th className="px-3 py-2 text-left">ID</th>
-                        <th className="px-3 py-2 text-left">Customer</th>
-                        <th className="px-3 py-2 text-left">Status</th>
-                        <th className="px-3 py-2 text-left">Total</th>
-                        <th className="px-3 py-2 text-left">Created</th>
-                        <th className="px-3 py-2 text-left">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {orders.data.map((o) => (
-                        <tr key={o.id} className="border-t">
-                            <td className="px-3 py-2">{o.id}</td>
-                            <td className="px-3 py-2">{o.customer?.name ?? '—'}</td>
-                            <td className="px-3 py-2 capitalize">{o.status}</td>
-                            <td className="px-3 py-2">${o.total.toFixed(2)}</td>
-                            <td className="px-3 py-2">{new Date(o.created_at).toLocaleString()}</td>
-                            <td className="space-x-3 px-3 py-2">
-                                <Link href={`/cashier/orders/${o.id}`} className="text-blue-600 hover:underline">
-                                    Show
-                                </Link>
-                                <Link href={`/cashier/orders/${o.id}/edit`} className="text-blue-600 hover:underline">
-                                    Edit
-                                </Link>
-                                <Link href={`/cashier/orders/${o.id}`} method="delete" as="button" className="text-red-600 hover:underline">
-                                    Delete
-                                </Link>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.get(currentUrl, { q: searchTerm }, { preserveState: true, replace: true });
+    };
+
+    const handleNavigate = (url?: string | null) => {
+        if (!url) return;
+        router.visit(url);
+    };
+
+    return (
+        <DashboardLayout>
+            <div className="container mx-auto px-4 py-6">
+                <div className="space-y-6">
+                    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                        <div>
+                            <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
+                            <p className="text-muted-foreground">Manage store orders</p>
+                        </div>
+
+                        <Button asChild>
+                            <Link href="/cashier/orders/create">New Order</Link>
+                        </Button>
+                    </div>
+
+                    <form onSubmit={handleSearch} className="flex max-w-sm items-center space-x-2">
+                        <Search className="h-4 w-4 text-muted-foreground" />
+                        <Input placeholder="Search orders..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        <Button type="submit">Search</Button>
+                    </form>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Orders ({orders.data.length})</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <DataTable<OrderListItem, unknown>
+                                columns={columns}
+                                data={orders.data}
+                                header={
+                                    <TableRow>
+                                        <TableHead className="w-16">ID</TableHead>
+                                        <TableHead>Customer</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead className="text-right">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="inline-flex items-center gap-2"
+                                                onClick={() => {
+                                                    // server-driven sort by total
+                                                    const sort = 'total';
+                                                    let direction = 'asc';
+                                                    if (filters?.sort === sort && filters?.direction === 'asc') direction = 'desc';
+                                                    router.get(currentUrl, { q: searchTerm, sort, direction }, { preserveState: true, replace: true });
+                                                }}
+                                            >
+                                                Total
+                                                <ArrowUpDown className="h-4 w-4" />
+                                            </Button>
+                                        </TableHead>
+                                        <TableHead className="text-right">
+                                            <Button
+                                                variant="ghost"
+                                                size="sm"
+                                                className="inline-flex items-center gap-2"
+                                                onClick={() => {
+                                                    const sort = 'created_at';
+                                                    let direction = 'asc';
+                                                    if (filters?.sort === sort && filters?.direction === 'asc') direction = 'desc';
+                                                    router.get(currentUrl, { q: searchTerm, sort, direction }, { preserveState: true, replace: true });
+                                                }}
+                                            >
+                                                Created
+                                                <ArrowUpDown className="h-4 w-4" />
+                                            </Button>
+                                        </TableHead>
+                                        <TableHead className="text-right">Actions</TableHead>
+                                    </TableRow>
+                                }
+                            />
+
+                            <div className="mt-4 flex items-center justify-center">
+                                <PaginationFromLaravel links={orders.links} onNavigate={handleNavigate} />
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </DashboardLayout>
     );
 }

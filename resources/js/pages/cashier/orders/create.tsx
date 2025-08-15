@@ -1,4 +1,12 @@
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Separator } from '@/components/ui/separator';
+import DashboardLayout from '@/layouts/dashboard-layout';
 import { Link, useForm } from '@inertiajs/react';
+import { ArrowLeft, Package, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
 type OrderStatus = 'pending' | 'completed' | 'cancelled';
@@ -45,100 +53,167 @@ export default function CashierOrdersCreate({ customers, items, statuses }: { cu
     };
 
     return (
-        <div className="p-4">
-            <h1 className="mb-4 text-2xl font-bold">Create Order</h1>
-            <form onSubmit={submit} className="space-y-4">
-                <div>
-                    <label className="mb-1 block">Customer (optional)</label>
-                    <select
-                        className="w-full rounded border px-3 py-2"
-                        value={data.customer_id ?? ''}
-                        onChange={(e) => setData('customer_id', e.target.value ? Number(e.target.value) : null)}
-                    >
-                        <option value="">— None —</option>
-                        {customers.map((c) => (
-                            <option key={c.id} value={c.id}>
-                                {c.name}
-                            </option>
-                        ))}
-                    </select>
-                    {errors.customer_id && <p className="text-sm text-red-600">{errors.customer_id}</p>}
-                </div>
-
-                <div>
-                    <label className="mb-1 block">Status</label>
-                    <select
-                        className="w-full rounded border px-3 py-2 capitalize"
-                        value={data.status}
-                        onChange={(e) => setData('status', e.target.value as OrderStatus)}
-                    >
-                        {statuses.map((s) => (
-                            <option key={s} value={s}>
-                                {s}
-                            </option>
-                        ))}
-                    </select>
-                    {errors.status && <p className="text-sm text-red-600">{errors.status}</p>}
-                </div>
-
-                <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                        <h2 className="text-lg font-semibold">Items</h2>
-                        <button type="button" onClick={addLine} className="rounded bg-gray-200 px-3 py-1">
-                            Add Line
-                        </button>
+        <DashboardLayout>
+            <div className="container mx-auto px-4 py-6">
+                <div className="mb-6 flex items-center gap-4">
+                    <Button asChild variant="outline" size="sm">
+                        <Link href="/cashier/orders">
+                            <ArrowLeft className="mr-2 h-4 w-4" />
+                            Back to Orders
+                        </Link>
+                    </Button>
+                    <div>
+                        <h1 className="text-2xl font-bold">Create Order</h1>
+                        <p className="text-sm text-muted-foreground">Add a new order to the system</p>
                     </div>
-
-                    {lines.map((line, idx) => (
-                        <div key={idx} className="flex items-center gap-2">
-                            <select
-                                className="flex-1 rounded border px-3 py-2"
-                                value={line.item_id}
-                                onChange={(e) => {
-                                    const itemId = Number(e.target.value);
-                                    const item = items.find((i) => i.id === itemId);
-                                    updateLine(idx, { item_id: itemId, price: item?.price ?? 0 });
-                                }}
-                            >
-                                {items.map((it) => (
-                                    <option key={it.id} value={it.id}>
-                                        {it.name} (${it.price.toFixed(2)})
-                                    </option>
-                                ))}
-                            </select>
-                            <input
-                                type="number"
-                                min={1}
-                                className="w-24 rounded border px-2 py-2"
-                                value={line.quantity}
-                                onChange={(e) => updateLine(idx, { quantity: Number(e.target.value) })}
-                            />
-                            <input
-                                type="number"
-                                min={0}
-                                step="0.01"
-                                className="w-28 rounded border px-2 py-2"
-                                value={line.price}
-                                onChange={(e) => updateLine(idx, { price: Number(e.target.value) })}
-                            />
-                            <button type="button" onClick={() => removeLine(idx)} className="text-red-600">
-                                Remove
-                            </button>
-                        </div>
-                    ))}
-
-                    {errors['items'] && <p className="text-sm text-red-600">{errors['items']}</p>}
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button type="submit" disabled={processing} className="rounded bg-blue-600 px-4 py-2 text-white">
-                        Create
-                    </button>
-                    <Link href="/cashier/orders" className="text-gray-700">
-                        Cancel
-                    </Link>
-                </div>
-            </form>
-        </div>
+                <form onSubmit={submit} className="space-y-6">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle className="flex items-center gap-2">
+                                <ShoppingCart className="h-5 w-5" />
+                                Order Details
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                                <div className="space-y-2">
+                                    <Label>Customer</Label>
+                                    <Select
+                                        value={data.customer_id === null ? 'none' : String(data.customer_id)}
+                                        onValueChange={(v) => setData('customer_id', v === 'none' ? null : Number(v))}
+                                    >
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="— None —" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">— None —</SelectItem>
+                                            {customers.map((c) => (
+                                                <SelectItem key={c.id} value={String(c.id)}>
+                                                    {c.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.customer_id && <p className="text-sm text-red-600">{errors.customer_id}</p>}
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Status</Label>
+                                    <Select value={data.status} onValueChange={(v) => setData('status', v as OrderStatus)}>
+                                        <SelectTrigger>
+                                            <SelectValue />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {statuses.map((s) => (
+                                                <SelectItem key={s} value={s}>
+                                                    {s}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                    {errors.status && <p className="text-sm text-red-600">{errors.status}</p>}
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <div className="flex w-full items-center justify-between">
+                                <CardTitle className="flex items-center gap-2">
+                                    <Package className="h-5 w-5" />
+                                    Items
+                                </CardTitle>
+                                <Button type="button" variant="outline" size="sm" onClick={addLine}>
+                                    <Plus className="mr-2 h-4 w-4" />
+                                    Add Line
+                                </Button>
+                            </div>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            {lines.map((line, idx) => {
+                                return (
+                                    <div key={idx} className="space-y-4">
+                                        <div className="flex flex-col items-start gap-4 sm:flex-row sm:items-end">
+                                            <div className="flex-1 space-y-2">
+                                                <Label>Item</Label>
+                                                <Select
+                                                    value={String(line.item_id)}
+                                                    onValueChange={(v) => {
+                                                        const itemId = Number(v);
+                                                        const it = items.find((i) => i.id === itemId);
+                                                        updateLine(idx, { item_id: itemId, price: it?.price ?? 0 });
+                                                    }}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        {items.map((it) => (
+                                                            <SelectItem key={it.id} value={String(it.id)}>
+                                                                {it.name} (${it.price.toFixed(2)})
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                            </div>
+
+                                            <div className="w-24 space-y-2">
+                                                <Label>Qty</Label>
+                                                <Input
+                                                    type="number"
+                                                    min={1}
+                                                    value={line.quantity}
+                                                    onChange={(e) => updateLine(idx, { quantity: Number(e.target.value) || 1 })}
+                                                    className="text-center"
+                                                />
+                                            </div>
+
+                                            <div className="w-32 space-y-2">
+                                                <Label>Line Total</Label>
+                                                <div className="flex h-10 items-center justify-end font-semibold">
+                                                    ${(line.price * line.quantity).toFixed(2)}
+                                                </div>
+                                            </div>
+
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                onClick={() => removeLine(idx)}
+                                                className="text-destructive hover:text-destructive"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                                <span className="sr-only">Remove</span>
+                                            </Button>
+                                        </div>
+                                        {idx < lines.length - 1 && <Separator />}
+                                    </div>
+                                );
+                            })}
+
+                            {errors['items'] && <p className="text-sm text-red-600">{errors['items']}</p>}
+
+                            <Separator />
+                            <div className="flex items-center justify-between pt-4">
+                                <span className="text-lg font-semibold">Total</span>
+                                <span className="text-xl font-bold">${lines.reduce((sum, l) => sum + l.price * l.quantity, 0).toFixed(2)}</span>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <div className="flex gap-4">
+                        <Button type="submit" className="flex-1 sm:flex-none" disabled={processing}>
+                            Create Order
+                        </Button>
+                        <Button type="button" variant="outline" asChild className="flex-1 sm:flex-none">
+                            <Link href="/cashier/orders">Cancel</Link>
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </DashboardLayout>
     );
 }

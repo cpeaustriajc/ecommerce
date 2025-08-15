@@ -16,9 +16,33 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        Customer::factory(20)->create();
-        Cashier::factory(5)->create();
-        Item::factory(20)->create();
-        Order::factory(10)->create();
+        Customer::factory(50)->create();
+        Cashier::factory(10)->create();
+
+        $days = 60;
+        for ($i = 0; $i < 200; $i++) {
+            $start = sprintf('-%d days', rand(0, $days));
+            Item::factory()->createdBetween($start, 'now')->create();
+        }
+
+        // Ensure each customer has some orders (1-10 each)
+        $customers = Customer::all();
+        $days = 90;
+        foreach ($customers as $customer) {
+            $ordersForCustomer = rand(1, 10);
+            for ($j = 0; $j < $ordersForCustomer; $j++) {
+                $start = sprintf('-%d days', rand(0, $days));
+                Order::factory()->createdBetween($start, 'now')->create([
+                    'customer_id' => $customer->id,
+                ]);
+            }
+        }
+
+        // Add some extra random orders to increase dataset variety
+        $extraOrderCount = 200;
+        for ($i = 0; $i < $extraOrderCount; $i++) {
+            $start = sprintf('-%d days', rand(0, $days));
+            Order::factory()->createdBetween($start, 'now')->create();
+        }
     }
 }

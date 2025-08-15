@@ -20,8 +20,20 @@ class ItemFactory extends Factory
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
             'price' => $this->faker->randomFloat(2, 1, 1000),
-            'created_at' => $this->faker->dateTimeBetween('-2 months', 'now'),
-            'updated_at' => $this->faker->dateTimeBetween('-2 months', 'now'),
+            'created_at' => $this->faker->dateTimeBetween('-3 months', 'now'),
+            'updated_at' => $this->faker->dateTimeBetween('-3 months', 'now'),
         ];
+    }
+
+    public function createdBetween(string $start, string $end)
+    {
+        return $this->state(function (array $attributes) use ($start, $end) {
+            $dateTime = $this->faker->dateTimeBetween($start, $end);
+
+            return [
+                'created_at' => $dateTime,
+                'updated_at' => $dateTime,
+            ];
+        });
     }
 }

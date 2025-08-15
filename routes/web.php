@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CashierAuthController;
+use App\Http\Controllers\CashierDashboardController;
 use App\Http\Controllers\CashierOrderController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
@@ -24,9 +25,9 @@ Route::prefix('customer')
         });
 
         Route::middleware('auth:customer')->group(function () {
-            Route::get('/profile/{customer}', [CustomerController::class, 'show'])->name('profile');
-            Route::get('/profile/edit', [CustomerController::class, 'edit'])->name('edit');
-            Route::put('/profile', [CustomerController::class, 'update'])->name('update');
+            Route::get('/profile/{customer}', [CustomerController::class, 'show'])->name('profile.show');
+            Route::get('/profile/edit', [CustomerController::class, 'edit'])->name('profile.edit');
+            Route::put('/profile/{customer}', [CustomerController::class, 'update'])->name('profile.update');
 
             Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
             Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
@@ -49,7 +50,7 @@ Route::prefix('cashier')
         });
 
         Route::middleware('auth:cashier')->group(function () {
-            Route::get('dashboard', fn () => Inertia::render('cashier/dashboard'))->name('dashboard');
+            Route::get('dashboard', [CashierDashboardController::class, 'index'])->name('dashboard');
             Route::resource('items', ItemController::class)->names([
                 'index' => 'items.index',
                 'create' => 'items.create',

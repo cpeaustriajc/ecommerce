@@ -8,9 +8,6 @@ use Inertia\Inertia;
 
 class CustomerController extends Controller
 {
-    /**
-     * Display the specified resource.
-     */
     public function show(Customer $customer)
     {
         return Inertia::render('customer/profile', [
@@ -18,27 +15,16 @@ class CustomerController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Customer $customer)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Customer $customer)
     {
-        //
-    }
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:customers,email,'.$customer->id],
+            'phone' => ['nullable', 'string', 'max:20'],
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Customer $customer)
-    {
-        //
+        $customer->update($data);
+
+        return redirect()->route('customer.profile.show', $customer)->with('success', 'Profile updated successfully.');
     }
 }

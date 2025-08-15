@@ -9,28 +9,54 @@ use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Order;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class CashierOrderController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $this->authorize('viewAny', Order::class);
-        $orders = Order::query()
+
+        $q = $request->query('q');
+        $sort = $request->query('sort');
+        $direction = $request->query('direction', 'desc');
+
+        $ordersQuery = Order::query()
             ->with([
                 'customer:id,name',
                 'cashier:id,name',
-                'items' => fn (BelongsToMany $q) => $q
+                'items' => fn(BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
-            ->select(['id', 'customer_id', 'cashier_id', 'status', 'total', 'created_at'])
-            ->latest()
-            ->paginate(10);
+            ->select(['id', 'customer_id', 'cashier_id', 'status', 'total', 'created_at']);
+
+        if ($q) {
+            $ordersQuery->where(function ($builder) use ($q) {
+                if (is_numeric($q)) {
+                    $builder->where('id', (int) $q);
+                }
+
+                $builder->orWhere('status', 'like', "%{$q}%");
+                $builder->orWhereHas('customer', fn($b) => $b->where('name', 'like', "%{$q}%"));
+                $builder->orWhereHas('cashier', fn($b) => $b->where('name', 'like', "%{$q}%"));
+            });
+        }
+
+        $allowedSorts = ['total', 'created_at', 'id'];
+        if ($sort && in_array($sort, $allowedSorts)) {
+            $ordersQuery->orderBy($sort, $direction === 'asc' ? 'asc' : 'desc');
+        } else {
+            $ordersQuery->latest();
+        }
+
+        $orders = $ordersQuery->paginate(10)->withQueryString();
 
         return Inertia::render('cashier/orders/index', [
             'orders' => $orders,
+            'filters' => $request->only(['q', 'sort', 'direction']),
         ]);
     }
 
@@ -86,7 +112,7 @@ class CashierOrderController extends Controller
         $order->load([
             'customer:id,name',
             'cashier:id,name',
-            'items' => fn (BelongsToMany $q) => $q
+            'items' => fn(BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
                 ->withPivot(['quantity', 'price']),
         ]);
@@ -99,7 +125,7 @@ class CashierOrderController extends Controller
                 'created_at' => $order->created_at?->toISOString(),
                 'customer' => $order->customer?->only(['id', 'name']),
                 'cashier' => $order->cashier?->only(['id', 'name']),
-                'items' => $order->items->map(fn (Item $item) => [
+                'items' => $order->items->map(fn(Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
@@ -114,7 +140,7 @@ class CashierOrderController extends Controller
     {
         $this->authorize('update', $order);
         $order->load([
-            'items' => fn (BelongsToMany $q) => $q
+            'items' => fn(BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
                 ->withPivot(['quantity', 'price']),
         ]);
@@ -124,7 +150,7 @@ class CashierOrderController extends Controller
                 'id' => $order->id,
                 'status' => $order->status,
                 'total' => (float) $order->total,
-                'items' => $order->items->map(fn (Item $item) => [
+                'items' => $order->items->map(fn(Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
@@ -150,7 +176,7 @@ class CashierOrderController extends Controller
     {
         $this->authorize('delete', $order);
         DB::transaction(function () use ($order) {
-            $order->items()->detach(); // prevent FK restrict on pivot
+            $order->items()->detach();
             $order->delete();
         });
 

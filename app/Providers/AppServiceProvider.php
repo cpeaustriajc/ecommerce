@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
             if ($request->routeIs('cashier.*')) {
                 return route('cashier.dashboard');
             } elseif ($request->routeIs('customer.*')) {
-                return route('customer.profile');
+                return route('storefront.index');
             }
         });
 

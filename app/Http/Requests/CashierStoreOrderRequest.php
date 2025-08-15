@@ -22,7 +22,7 @@ class CashierStoreOrderRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'customer_id' => ['nullable', 'exists:customers,id'],
+            'customer_id' => ['required', 'exists:customers,id'],
             'status' => ['required', 'string', 'in:pending,completed,cancelled'],
             'items' => ['required', 'array', 'min:1'],
             'items.*.item_id' => ['required', 'exists:items,id'],

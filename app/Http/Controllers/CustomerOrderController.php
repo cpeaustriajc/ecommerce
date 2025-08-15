@@ -29,7 +29,7 @@ class CustomerOrderController extends Controller
             ])
             ->select(['id', 'customer_id', 'cashier_id', 'status', 'total', 'created_at'])
             ->latest()
-            ->paginate(10);
+            ->paginate(2);
 
         return Inertia::render('customer/orders/index', [
             'orders' => $orders,
@@ -52,6 +52,7 @@ class CustomerOrderController extends Controller
                 'id' => $order->id,
                 'status' => $order->status,
                 'total' => (float) $order->total,
+                'created_at' => $order->created_at,
                 'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
@@ -115,5 +116,16 @@ class CustomerOrderController extends Controller
 
         return redirect()->route('customer.orders.index')
             ->with('success', 'Order updated successfully.');
+    }
+
+    public function destroy(Order $order): RedirectResponse
+    {
+        $this->authorize('delete', $order);
+
+        $order->items()->detach();
+        $order->delete();
+
+        return redirect()->route('customer.orders.index')
+            ->with('success', 'Order deleted successfully.');
     }
 }
