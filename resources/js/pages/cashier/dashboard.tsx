@@ -1,4 +1,5 @@
 import DashboardLayout from '@/layouts/dashboard-layout';
+import { Head } from '@inertiajs/react';
 import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
 
 type SeriesPoint = { date: string };
@@ -32,6 +33,7 @@ export default function CashierDashboardPage({
 
     return (
         <DashboardLayout>
+            <Head title="Cashier Dashboard" />
             <div className="p-8">
                 <h1 className="mb-4 text-2xl font-bold">Cashier Dashboard</h1>
                 <p className="mb-4 text-gray-600">Overview of recent sales and item activity.</p>

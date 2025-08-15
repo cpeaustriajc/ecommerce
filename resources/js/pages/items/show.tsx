@@ -3,7 +3,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Item } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, Head } from '@inertiajs/react';
 import { ArrowLeftIcon, PackageIcon, ShoppingCartIcon } from 'lucide-react';
 
 export default function ShowItemPage({ item }: { item: Item }) {
@@ -19,6 +19,7 @@ export default function ShowItemPage({ item }: { item: Item }) {
 
     return (
         <>
+            <Head title={item.name ? `${item.name} — Item` : 'Item Details'} />
             <Header />
             <div className="container mx-auto max-w-2xl px-4 py-8">
                 <div className="mb-6">

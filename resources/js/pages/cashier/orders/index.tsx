@@ -7,7 +7,7 @@ import { columns } from './columns';
 import DataTable from './data-table';
 import { ArrowUpDown } from 'lucide-react';
 import DashboardLayout from '@/layouts/dashboard-layout';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage, Head } from '@inertiajs/react';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 
@@ -48,6 +48,7 @@ export default function CashierOrdersIndex({ orders, filters }: { orders: Pagina
 
     return (
         <DashboardLayout>
+            <Head title="Orders — Cashier" />
             <div className="container mx-auto px-4 py-6">
                 <div className="space-y-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

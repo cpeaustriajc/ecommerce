@@ -4,7 +4,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Customer } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, Head } from '@inertiajs/react';
 import { ArrowLeftIcon, AtSignIcon, SaveIcon } from 'lucide-react';
 
 export default function CustomerProfilePage({ customer }: { customer?: Customer }) {
@@ -21,6 +21,7 @@ export default function CustomerProfilePage({ customer }: { customer?: Customer 
     };
     return (
         <>
+            <Head title="Customer Profile" />
             <Header />
             <div className="container mx-auto px-4 py-8">
                 <div className="mx-auto max-w-2xl">

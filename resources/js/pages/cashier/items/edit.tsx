@@ -1,5 +1,5 @@
 import { Item } from '@/types';
-import { useForm } from '@inertiajs/react';
+import { useForm, Head } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,6 +25,7 @@ export default function EditItemPage({ item }: { item: Item }) {
 
     return (
         <DashboardLayout>
+            <Head title={item.name ? `Edit Item — ${item.name}` : 'Edit Item'} />
             <div className="container mx-auto px-4 py-6 max-w-2xl">
                 <div className="mb-6 flex items-center gap-4">
                     <div>

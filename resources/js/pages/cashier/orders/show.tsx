@@ -1,4 +1,4 @@
-import { Link } from '@inertiajs/react';
+import { Link, Head } from '@inertiajs/react';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,6 +20,7 @@ export default function CashierOrdersShow({
 }) {
     return (
         <DashboardLayout>
+            <Head title={`Order #${order.id}`} />
             <div className="container mx-auto px-4 py-6">
                 <div className="mb-6 flex items-center justify-between">
                     <div className="flex items-center gap-4">

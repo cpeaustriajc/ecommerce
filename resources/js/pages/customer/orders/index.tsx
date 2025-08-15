@@ -2,7 +2,7 @@ import Header from '@/components/header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { Link, router, useForm } from '@inertiajs/react';
+import { Link, router, useForm, Head } from '@inertiajs/react';
 import { ArrowLeftIcon, CalendarIcon, CreditCardIcon, Eye, PackageIcon, XCircleIcon } from 'lucide-react';
 import React from 'react'
 import { getStatusIcon, getStatusVariant, getItemIcon, Badge } from '@/components/orders/utils';
@@ -47,6 +47,7 @@ export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
 
     return (
         <>
+            <Head title="My Orders" />
             <Header />
             <div className="container mx-auto max-w-4xl px-4 py-6">
                 <div className="mb-6">

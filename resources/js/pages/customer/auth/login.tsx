@@ -21,7 +21,7 @@ export default function CustomerLoginPage() {
 
     return (
         <>
-            <Head title="Login" />
+            <Head title="Login as a Customer" />
             <div className="relative container mx-auto grid min-h-dvh place-items-center p-4">
                 <div className="grid max-w-2xl grid-cols-1 gap-4 rounded-lg border border-gray-200 p-6 shadow-md">
                     <div>

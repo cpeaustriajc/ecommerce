@@ -5,7 +5,7 @@ import { PaginationFromLaravel } from '@/components/ui/pagination';
 import { TableHead, TableRow } from '@/components/ui/table';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { Item } from '@/types';
-import { Link, router, usePage } from '@inertiajs/react';
+import { Link, router, usePage, Head } from '@inertiajs/react';
 import { ArrowUpDown, Package, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { columns } from './columns';
@@ -48,6 +48,7 @@ export default function CashierItemsIndex({
 
     return (
         <DashboardLayout>
+            <Head title="Items — Cashier" />
             <div className="container mx-auto px-4 py-6">
                 <div className="space-y-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">

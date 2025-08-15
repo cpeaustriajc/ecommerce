@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { Order } from '@/types';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, Head } from '@inertiajs/react';
 import { ArrowLeftIcon, Package } from 'lucide-react';
 
 const getStatusColor = (status: Order['status']) => {
@@ -25,6 +25,7 @@ const getStatusColor = (status: Order['status']) => {
 export default function OrderShow({ order }: { order: Order }) {
     return (
         <>
+            <Head title={`Order #${order.id}`} />
             <Header />
             <div className="container mx-auto max-w-4xl px-4 py-6">
                 <div className="mb-6">

@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import DashboardLayout from '@/layouts/dashboard-layout';
-import { Link, useForm } from '@inertiajs/react';
+import { Link, useForm, Head } from '@inertiajs/react';
 import { ArrowLeft, Package, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 
@@ -54,6 +54,7 @@ export default function CashierOrdersCreate({ customers, items, statuses }: { cu
 
     return (
         <DashboardLayout>
+            <Head title="Create Order" />
             <div className="container mx-auto px-4 py-6">
                 <div className="mb-6 flex items-center gap-4">
                     <Button asChild variant="outline" size="sm">
