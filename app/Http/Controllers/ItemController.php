@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Item;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
+use App\Models\Item;
 use Illuminate\Http\RedirectResponse;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,13 +26,14 @@ class ItemController extends Controller
     public function create(): Response
     {
         $this->authorize('create', Item::class);
+
         return Inertia::render('cashier/items/create');
     }
 
     public function store(StoreItemRequest $request): RedirectResponse
     {
         $this->authorize('create', Item::class);
-        $item = new Item();
+        $item = new Item;
         $item->name = $request->validated('name');
         $item->price = $request->validated('price');
         $item->description = $request->validated('description');
@@ -44,6 +45,7 @@ class ItemController extends Controller
     public function show(Item $item): Response
     {
         $this->authorize('view', $item);
+
         return Inertia::render('cashier/items/show', [
             'item' => $item,
         ]);
@@ -52,6 +54,7 @@ class ItemController extends Controller
     public function edit(Item $item): Response
     {
         $this->authorize('update', $item);
+
         return Inertia::render('cashier/items/edit', [
             'item' => $item,
         ]);

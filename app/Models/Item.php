@@ -16,7 +16,7 @@ class Item extends Model
     protected $fillable = [
         'name',
         'description',
-        'price'
+        'price',
     ];
 
     public function orders()

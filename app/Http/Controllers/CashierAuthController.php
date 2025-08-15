@@ -26,6 +26,7 @@ class CashierAuthController extends Controller
 
         if (Auth::guard('cashier')->attempt($request->only('email', 'password'), $remember)) {
             $request->session()->regenerate();
+
             return redirect()->intended(route('cashier.dashboard'));
         }
 

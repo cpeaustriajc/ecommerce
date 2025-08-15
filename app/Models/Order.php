@@ -20,12 +20,11 @@ class Order extends Model
         'status' => OrderStatus::class,
     ];
 
-
     protected $fillable = [
         'customer_id',
         'cashier_id',
         'status',
-        'total'
+        'total',
     ];
 
     public function customer(): BelongsTo
@@ -49,7 +48,7 @@ class Order extends Model
     public function recalculateTotal()
     {
         $this->load('items');
-        $total = $this->items->sum(fn($item) => $item->pivot->quantity * $item->pivot->price);
+        $total = $this->items->sum(fn ($item) => $item->pivot->quantity * $item->pivot->price);
         $this->update(['total' => $total]);
     }
 }

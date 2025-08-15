@@ -20,7 +20,7 @@ class StoreCustomerOrderRequest extends FormRequest
     {
         return [
             'itemId' => 'required|integer|exists:items,id',
-            'quantity' => 'required|integer|min:1|max:100'
+            'quantity' => 'required|integer|min:1|max:100',
         ];
     }
 }

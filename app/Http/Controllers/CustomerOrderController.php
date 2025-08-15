@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\OrderStatus;
 use App\Http\Requests\StoreCustomerOrderRequest;
 use App\Http\Requests\UpdateCustomerOrderRequest;
 use App\Models\Item;
 use App\Models\Order;
-use App\Enums\OrderStatus;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,7 +23,7 @@ class CustomerOrderController extends Controller
         $orders = Order::query()
             ->where('customer_id', $customer->id)
             ->with([
-                'items' => fn(BelongsToMany $q) => $q
+                'items' => fn (BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
@@ -40,11 +40,11 @@ class CustomerOrderController extends Controller
     {
         $this->authorize('view', $order);
         $order->load([
-            'items' => fn(BelongsToMany $q) => $q->select([
+            'items' => fn (BelongsToMany $q) => $q->select([
                 'items.id',
                 'items.name',
-                'items.price'
-            ])->withPivot(['quantity', 'price'])
+                'items.price',
+            ])->withPivot(['quantity', 'price']),
         ]);
 
         return Inertia::render('customer/orders/show', [
@@ -52,14 +52,14 @@ class CustomerOrderController extends Controller
                 'id' => $order->id,
                 'status' => $order->status,
                 'total' => (float) $order->total,
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
                     'quantity' => (float) $item->pivot->quantity,
-                    'total' => (float) ($item->pivot->quantity * $item->pivot->price)
-                ])
-            ]
+                    'total' => (float) ($item->pivot->quantity * $item->pivot->price),
+                ]),
+            ],
         ]);
     }
 
@@ -83,7 +83,7 @@ class CustomerOrderController extends Controller
                 $item->id => [
                     'quantity' => $quantity,
                     'price' => $item->price,
-                ]
+                ],
             ]);
 
             $order->recalculateTotal();

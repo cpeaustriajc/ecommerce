@@ -17,12 +17,11 @@ Route::prefix('customer')
     ->name('customer.')
     ->group(function () {
         Route::middleware('guest:customer')->group(function () {
-            Route::get('login', fn() => Inertia::render('customer/auth/login'))->name('login');
+            Route::get('login', fn () => Inertia::render('customer/auth/login'))->name('login');
             Route::post('login', [CustomerAuthController::class, 'login'])->name('login.submit');
-            Route::get('register', fn() => Inertia::render('customer/auth/register'))->name('register');
+            Route::get('register', fn () => Inertia::render('customer/auth/register'))->name('register');
             Route::post('register', [CustomerAuthController::class, 'register'])->name('register.submit');
         });
-
 
         Route::middleware('auth:customer')->group(function () {
             Route::get('/profile/{customer}', [CustomerController::class, 'show'])->name('profile');
@@ -43,14 +42,14 @@ Route::prefix('cashier')
     ->name('cashier.')
     ->group(function () {
         Route::middleware('guest:cashier')->group(function () {
-            Route::get('login', fn() => Inertia::render('cashier/auth/login'))->name('login');
+            Route::get('login', fn () => Inertia::render('cashier/auth/login'))->name('login');
             Route::post('login', [CashierAuthController::class, 'login'])->name('login.submit');
-            Route::get('register', fn() => Inertia::render('cashier/auth/register'))->name('register');
+            Route::get('register', fn () => Inertia::render('cashier/auth/register'))->name('register');
             Route::post('register', [CashierAuthController::class, 'register'])->name('register.submit');
         });
 
         Route::middleware('auth:cashier')->group(function () {
-            Route::get('dashboard', fn() => Inertia::render('cashier/dashboard'))->name('dashboard');
+            Route::get('dashboard', fn () => Inertia::render('cashier/dashboard'))->name('dashboard');
             Route::resource('items', ItemController::class)->names([
                 'index' => 'items.index',
                 'create' => 'items.create',

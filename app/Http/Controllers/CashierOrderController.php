@@ -3,11 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderStatus;
+use App\Http\Requests\CashierStoreOrderRequest;
+use App\Http\Requests\CashierUpdateOrderRequest;
 use App\Models\Customer;
 use App\Models\Item;
 use App\Models\Order;
-use App\Http\Requests\CashierStoreOrderRequest;
-use App\Http\Requests\CashierUpdateOrderRequest;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
@@ -21,7 +21,7 @@ class CashierOrderController extends Controller
             ->with([
                 'customer:id,name',
                 'cashier:id,name',
-                'items' => fn(BelongsToMany $q) => $q
+                'items' => fn (BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
@@ -37,6 +37,7 @@ class CashierOrderController extends Controller
     public function create()
     {
         $this->authorize('create', Order::class);
+
         return Inertia::render('cashier/orders/create', [
             'customers' => Customer::query()->select(['id', 'name'])->orderBy('name')->get(),
             'items' => Item::query()->select(['id', 'name', 'price'])->orderBy('name')->get(),
@@ -57,7 +58,7 @@ class CashierOrderController extends Controller
                 'customer_id' => $customer,
                 'cashier_id' => $cashier->id,
                 'status' => $status,
-                'total' => 0
+                'total' => 0,
             ]);
 
             $attach = [];
@@ -85,7 +86,7 @@ class CashierOrderController extends Controller
         $order->load([
             'customer:id,name',
             'cashier:id,name',
-            'items' => fn(BelongsToMany $q) => $q
+            'items' => fn (BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
                 ->withPivot(['quantity', 'price']),
         ]);
@@ -98,7 +99,7 @@ class CashierOrderController extends Controller
                 'created_at' => $order->created_at?->toISOString(),
                 'customer' => $order->customer?->only(['id', 'name']),
                 'cashier' => $order->cashier?->only(['id', 'name']),
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
@@ -113,7 +114,7 @@ class CashierOrderController extends Controller
     {
         $this->authorize('update', $order);
         $order->load([
-            'items' => fn(BelongsToMany $q) => $q
+            'items' => fn (BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
                 ->withPivot(['quantity', 'price']),
         ]);
@@ -123,7 +124,7 @@ class CashierOrderController extends Controller
                 'id' => $order->id,
                 'status' => $order->status,
                 'total' => (float) $order->total,
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,

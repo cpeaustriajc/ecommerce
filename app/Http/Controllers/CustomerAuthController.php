@@ -5,8 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CustomerLoginRequest;
 use App\Http\Requests\CustomerRegisterRequest;
 use App\Models\Customer;
-use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerAuthController extends Controller
@@ -26,6 +26,7 @@ class CustomerAuthController extends Controller
 
         if (Auth::guard('customer')->attempt($request->only('email', 'password'), $remember)) {
             $request->session()->regenerate();
+
             return redirect()->intended(route('storefront.index'));
         }
 

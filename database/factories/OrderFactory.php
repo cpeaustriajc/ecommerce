@@ -48,7 +48,7 @@ class OrderFactory extends Factory
 
             $order->items()->attach($attach);
             $order->load('items');
-            $total = $order->items->sum(fn($i) => $i->pivot->quantity * $i->pivot->price);
+            $total = $order->items->sum(fn ($i) => $i->pivot->quantity * $i->pivot->price);
             $order->update(['total' => $total]);
         });
     }

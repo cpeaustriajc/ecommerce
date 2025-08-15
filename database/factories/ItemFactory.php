@@ -20,8 +20,7 @@ class ItemFactory extends Factory
             'name' => $this->faker->word(),
             'description' => $this->faker->sentence(),
             'price' => $this->faker->randomFloat(2, 1, 1000),
-            'stock' => $this->faker->numberBetween(0, 100),
-            'created_at'=>$this->faker->dateTimeBetween('-2 months', 'now'),
+            'created_at' => $this->faker->dateTimeBetween('-2 months', 'now'),
             'updated_at' => $this->faker->dateTimeBetween('-2 months', 'now'),
         ];
     }
