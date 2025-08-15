@@ -16,6 +16,7 @@ class CashierOrderController extends Controller
 {
     public function index()
     {
+        $this->authorize('viewAny', Order::class);
         $orders = Order::query()
             ->with([
                 'customer:id,name',
@@ -35,6 +36,7 @@ class CashierOrderController extends Controller
 
     public function create()
     {
+        $this->authorize('create', Order::class);
         return Inertia::render('cashier/orders/create', [
             'customers' => Customer::query()->select(['id', 'name'])->orderBy('name')->get(),
             'items' => Item::query()->select(['id', 'name', 'price'])->orderBy('name')->get(),
@@ -44,6 +46,7 @@ class CashierOrderController extends Controller
 
     public function store(CashierStoreOrderRequest $request)
     {
+        $this->authorize('create', Order::class);
         $cashier = $request->user('cashier');
 
         $customer = $request->validated('customerId');
@@ -78,6 +81,7 @@ class CashierOrderController extends Controller
 
     public function show(Order $order)
     {
+        $this->authorize('view', $order);
         $order->load([
             'customer:id,name',
             'cashier:id,name',
@@ -107,6 +111,7 @@ class CashierOrderController extends Controller
 
     public function edit(Order $order)
     {
+        $this->authorize('update', $order);
         $order->load([
             'items' => fn(BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
@@ -131,6 +136,7 @@ class CashierOrderController extends Controller
 
     public function update(CashierUpdateOrderRequest $request, Order $order)
     {
+        $this->authorize('update', $order);
         $status = OrderStatus::from($request->validated('status'));
         $order->update(['status' => $status]);
 
@@ -141,6 +147,7 @@ class CashierOrderController extends Controller
 
     public function destroy(Order $order)
     {
+        $this->authorize('delete', $order);
         DB::transaction(function () use ($order) {
             $order->items()->detach(); // prevent FK restrict on pivot
             $order->delete();

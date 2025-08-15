@@ -18,6 +18,7 @@ class CustomerOrderController extends Controller
 {
     public function index(Request $request): Response
     {
+        $this->authorize('viewAny', Order::class);
         $customer = $request->user('customer');
         $orders = Order::query()
             ->where('customer_id', $customer->id)
@@ -37,6 +38,7 @@ class CustomerOrderController extends Controller
 
     public function show(Order $order)
     {
+        $this->authorize('view', $order);
         $order->load([
             'items' => fn(BelongsToMany $q) => $q->select([
                 'items.id',
@@ -63,6 +65,7 @@ class CustomerOrderController extends Controller
 
     public function store(StoreCustomerOrderRequest $request): RedirectResponse
     {
+        $this->authorize('create', Order::class);
         $customer = $request->user('customer');
 
         $item = Item::query()->findOrFail($request->validated('itemId'));
@@ -92,6 +95,7 @@ class CustomerOrderController extends Controller
 
     public function update(UpdateCustomerOrderRequest $request, Order $order): RedirectResponse
     {
+        $this->authorize('update', $order);
         $itemId = (int) $request->validated('itemId');
         $quantity = (int) $request->validated('quantity');
 

@@ -3,11 +3,14 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use App\Policies\OrderPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
+#[UsePolicy(OrderPolicy::class)]
 class Order extends Model
 {
     /** @use HasFactory<\Database\Factories\OrderFactory> */

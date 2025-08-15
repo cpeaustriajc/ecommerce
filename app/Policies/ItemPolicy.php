@@ -2,64 +2,44 @@
 
 namespace App\Policies;
 
+use App\Models\Cashier;
 use App\Models\Customer;
 use App\Models\Item;
 use Illuminate\Auth\Access\Response;
 
 class ItemPolicy
 {
-    /**
-     * Determine whether the user can view any models.
-     */
-    public function viewAny(Customer $customer): bool
+    public function viewAny(Cashier|Customer $user): bool
+    {
+        return $user instanceof Cashier;
+    }
+
+    public function view(Cashier|Customer $user, Item $item): bool
+    {
+        return $user instanceof Cashier;
+    }
+
+    public function create(Cashier|Customer $user): bool
+    {
+        return $user instanceof Cashier;
+    }
+
+    public function update(Cashier|Customer $user, Item $item): bool
+    {
+        return $user instanceof Cashier;
+    }
+
+    public function delete(Cashier|Customer $user, Item $item): bool
+    {
+        return $user instanceof Cashier;
+    }
+
+    public function restore(Cashier|Customer $user, Item $item): bool
     {
         return false;
     }
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(Customer $customer, Item $item): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(Customer $customer): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(Customer $customer, Item $item): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can delete the model.
-     */
-    public function delete(Customer $customer, Item $item): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(Customer $customer, Item $item): bool
-    {
-        return false;
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(Customer $customer, Item $item): bool
+    public function forceDelete(Cashier|Customer $user, Item $item): bool
     {
         return false;
     }
