@@ -6,6 +6,7 @@ use App\Models\Cashier;
 use App\Models\Customer;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Item;
+use App\Models\Order;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -17,6 +18,7 @@ class DatabaseSeeder extends Seeder
     {
         Customer::factory(20)->create();
         Cashier::factory(5)->create();
-        Item::factory(50)->create();
+        Item::factory(20)->create();
+        Order::factory(10)->create();
     }
 }

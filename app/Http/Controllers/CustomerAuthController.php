@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\CustomerLoginRequest;
 use App\Http\Requests\CustomerRegisterRequest;
 use App\Models\Customer;
@@ -18,7 +17,7 @@ class CustomerAuthController extends Controller
         Auth::guard('customer')->login($customer);
         $request->session()->regenerate();
 
-        return redirect()->intended(route('storefront'));
+        return redirect()->intended(route('storefront.index'));
     }
 
     public function login(CustomerLoginRequest $request): RedirectResponse
@@ -27,7 +26,7 @@ class CustomerAuthController extends Controller
 
         if (Auth::guard('customer')->attempt($request->only('email', 'password'), $remember)) {
             $request->session()->regenerate();
-            return redirect()->intended(route('storefront'));
+            return redirect()->intended(route('storefront.index'));
         }
 
         return back()->withErrors([
@@ -38,10 +37,9 @@ class CustomerAuthController extends Controller
     public function logout(Request $request): RedirectResponse
     {
         Auth::guard('customer')->logout();
-        Auth::guard('customer')->
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('storefront');
+        return redirect()->route('storefront.index');
     }
 }

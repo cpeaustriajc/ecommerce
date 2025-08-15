@@ -15,10 +15,10 @@ export default function StoreFront({ items }: StorefrontProps) {
                 {page.props.auth.customer ? (
                     <>
                         <Link href={route('customer.profile', page.props.auth.customer.id)}>Profile</Link>
+                        <Link href={route('customer.orders.index')}>Orders</Link>
                         <Link href={route('customer.logout')} method="post">
                             Logout
                         </Link>
-                        <span>Welcome, {page.props.auth.customer.name}</span>
                     </>
                 ) : (
                     <>

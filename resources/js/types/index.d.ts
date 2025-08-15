@@ -40,3 +40,36 @@ export interface Item {
     description: string;
     price: number;
 }
+
+type OrderStatus = 'pending' | 'processing' | 'completed' | 'cancelled';
+
+type OrderItem = {
+    id: number;
+    name: string;
+    quantity: number;
+    price: number;
+    total: number;
+};
+
+type Order = {
+    id: number;
+    status: string;
+    total: number;
+    created_at: string;
+    items: OrderItem[];
+};
+
+type OrderListItem = {
+    id: number;
+    status: OrderStatus;
+    total: number;
+    created_at: string;
+    items?: Array<{
+        id: number;
+        name: string;
+        pivot: {
+            quantity: number;
+            price: number;
+        };
+    }>;
+};

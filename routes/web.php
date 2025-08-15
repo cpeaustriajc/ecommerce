@@ -3,47 +3,63 @@
 use App\Http\Controllers\CashierAuthController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\StorefrontController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', StorefrontController::class)->name('storefront');
+Route::get('/', [StorefrontController::class, 'index'])->name('storefront.index');
+Route::get('/items/{item}', [StorefrontController::class, 'show'])->name('storefront.show');
 
-Route::middleware('guest:customer')->group(function () {
-    Route::get('/customer/login', fn() => Inertia::render('customer/auth/login'))->name('customer.login');
-    Route::post('/customer/login', [CustomerAuthController::class, 'login'])->name('customer.login.submit');
-    Route::get('/customer/register', fn() => Inertia::render('customer/auth/register'))->name('customer.register');
-    Route::post('/customer/register', [CustomerAuthController::class, 'register'])->name('customer.register.submit');
+Route::prefix('customer')
+    ->name('customer.')
+    ->group(function () {
+        Route::middleware('guest:customer')->group(function () {
+            Route::get('login', fn() => Inertia::render('customer/auth/login'))->name('login');
+            Route::post('login', [CustomerAuthController::class, 'login'])->name('login.submit');
+            Route::get('register', fn() => Inertia::render('customer/auth/register'))->name('register');
+            Route::post('register', [CustomerAuthController::class, 'register'])->name('register.submit');
+        });
 
-});
-Route::middleware('auth:customer')->group(function () {
-    Route::resource('customer', CustomerController::class)->only(['show', 'edit', 'update'])->names([
-        'show' => 'customer.profile',
-        'edit' => 'customer.edit',
-        'update' => 'customer.update'
-    ]);
-    Route::post('/customer/logout', [CustomerAuthController::class, 'logout'])->name('customer.logout');
-});
 
-Route::middleware(['guest:cashier'])->group(function () {
-    Route::get('/cashier/login', fn() => Inertia::render('cashier/auth/login'))->name('cashier.login');
-    Route::post('/cashier/login', [CashierAuthController::class, 'login'])->name('cashier.login.submit');
-    Route::get('/cashier/register', fn() => Inertia::render('cashier/auth/register'))->name('cashier.register');
-    Route::post('/cashier/register', [CashierAuthController::class, 'register'])->name('cashier.register.submit');
-});
+        Route::middleware('auth:customer')->group(function () {
+            Route::get('/profile/{customer}', [CustomerController::class, 'show'])->name('profile');
+            Route::get('/profile/edit', [CustomerController::class, 'edit'])->name('edit');
+            Route::put('/profile', [CustomerController::class, 'update'])->name('update');
 
-Route::middleware(['auth:cashier'])->group(function () {
-    Route::get('/cashier/dashboard', fn() => Inertia::render('cashier/dashboard'))->name('cashier.dashboard');
-    Route::resource('/cashier/items', ItemController::class)->names([
-        'index' => 'cashier.items.index',
-        'create' => 'cashier.items.create',
-        'store' => 'cashier.items.store',
-        'show' => 'cashier.items.show',
-        'edit' => 'cashier.items.edit',
-        'update' => 'cashier.items.update',
-        'destroy' => 'cashier.items.destroy'
-    ]);
+            Route::get('/orders', [CustomerOrderController::class, 'index'])->name('orders.index');
+            Route::get('/orders/{order}', [CustomerOrderController::class, 'show'])->name('orders.show');
+            Route::post('/orders', [CustomerOrderController::class, 'store'])->name('orders.store');
+            Route::put('/orders/{order}', [CustomerOrderController::class, 'update'])->name('orders.update');
+            Route::delete('/orders/{order}', [CustomerOrderController::class, 'destroy'])->name('orders.destroy');
 
-    Route::post('/cashier/logout', [CashierAuthController::class, 'logout'])->name('cashier.logout');
-});
+            Route::post('logout', [CustomerAuthController::class, 'logout'])->name('logout');
+        });
+    });
+
+Route::prefix('cashier')
+    ->name('cashier.')
+    ->group(function () {
+        Route::middleware('guest:cashier')->group(function () {
+            Route::get('login', fn() => Inertia::render('cashier/auth/login'))->name('login');
+            Route::post('login', [CashierAuthController::class, 'login'])->name('login.submit');
+            Route::get('register', fn() => Inertia::render('cashier/auth/register'))->name('register');
+            Route::post('register', [CashierAuthController::class, 'register'])->name('register.submit');
+        });
+
+        Route::middleware('auth:cashier')->group(function () {
+            Route::get('dashboard', fn() => Inertia::render('cashier/dashboard'))->name('dashboard');
+            Route::resource('items', ItemController::class)->names([
+                'index' => 'items.index',
+                'create' => 'items.create',
+                'store' => 'items.store',
+                'show' => 'items.show',
+                'edit' => 'items.edit',
+                'update' => 'items.update',
+                'destroy' => 'items.destroy',
+            ]);
+
+            Route::post('logout', [CashierAuthController::class, 'logout'])->name('logout');
+        });
+    });
