@@ -14,7 +14,7 @@ export default function StoreFront({ items }: StorefrontProps) {
             <nav className="flex gap-2">
                 {page.props.auth.customer ? (
                     <>
-                        <Link href="/customer/dashboard">Dashboard</Link>
+                        <Link href={route('customer.profile', page.props.auth.customer.id)}>Profile</Link>
                         <Link href={route('customer.logout')} method="post">
                             Logout
                         </Link>
