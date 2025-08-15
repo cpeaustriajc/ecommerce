@@ -2,8 +2,10 @@
 
 namespace Database\Seeders;
 
+use App\Models\Cashier;
 use App\Models\Customer;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Item;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,11 +15,8 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        Customer::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        Customer::factory(20)->create();
+        Cashier::factory(5)->create();
+        Item::factory(50)->create();
     }
 }

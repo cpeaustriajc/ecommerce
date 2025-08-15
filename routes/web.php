@@ -3,10 +3,12 @@
 use App\Http\Controllers\CashierAuthController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\ItemController;
+use App\Http\Controllers\StorefrontController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', fn() => Inertia::render('storefront'))->name('storefront');
+Route::get('/', StorefrontController::class)->name('storefront');
 
 Route::middleware('guest:customer')->group(function () {
     Route::get('/customer/login', fn() => Inertia::render('customer/auth/login'))->name('customer.login');
@@ -33,6 +35,15 @@ Route::middleware(['guest:cashier'])->group(function () {
 
 Route::middleware(['auth:cashier'])->group(function () {
     Route::get('/cashier/dashboard', fn() => Inertia::render('cashier/dashboard'))->name('cashier.dashboard');
+    Route::resource('/cashier/items', ItemController::class)->names([
+        'index' => 'cashier.items.index',
+        'create' => 'cashier.items.create',
+        'store' => 'cashier.items.store',
+        'show' => 'cashier.items.show',
+        'edit' => 'cashier.items.edit',
+        'update' => 'cashier.items.update',
+        'destroy' => 'cashier.items.destroy'
+    ]);
 
     Route::post('/cashier/logout', [CashierAuthController::class, 'logout'])->name('cashier.logout');
 });

@@ -33,3 +33,10 @@ export interface Cashier {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Item {
+    id: number;
+    name: string;
+    description: string;
+    price: number;
+}
