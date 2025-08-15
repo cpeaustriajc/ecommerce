@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CashierAuthController;
+use App\Http\Controllers\CashierOrderController;
 use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerOrderController;
@@ -58,6 +59,16 @@ Route::prefix('cashier')
                 'edit' => 'items.edit',
                 'update' => 'items.update',
                 'destroy' => 'items.destroy',
+            ]);
+
+            Route::resource('orders', CashierOrderController::class)->names([
+                'index' => 'orders.index',
+                'create' => 'orders.create',
+                'store' => 'orders.store',
+                'show' => 'orders.show',
+                'edit' => 'orders.edit',
+                'update' => 'orders.update',
+                'destroy' => 'orders.destroy',
             ]);
 
             Route::post('logout', [CashierAuthController::class, 'logout'])->name('logout');
