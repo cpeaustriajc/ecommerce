@@ -7,12 +7,19 @@ use App\Http\Controllers\CustomerAuthController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CustomerOrderController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\ItemSubscriptionController;
 use App\Http\Controllers\StorefrontController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', [StorefrontController::class, 'index'])->name('storefront.index');
 Route::get('/items/{item}', [StorefrontController::class, 'show'])->name('storefront.show');
+
+// Item subscriptions (customers)
+Route::middleware('auth:customer')->group(function () {
+    Route::post('/items/{item}/subscribe', [ItemSubscriptionController::class, 'subscribe'])->name('items.subscribe');
+    Route::delete('/items/{item}/subscribe', [ItemSubscriptionController::class, 'unsubscribe'])->name('items.unsubscribe');
+});
 
 Route::prefix('customer')
     ->name('customer.')

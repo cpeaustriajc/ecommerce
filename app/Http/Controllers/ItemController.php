@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\ItemNotification;
+use App\Events\ItemPriceUpdated;
 use App\Http\Requests\StoreItemRequest;
 use App\Http\Requests\UpdateItemRequest;
 use App\Models\Item;
@@ -93,7 +95,17 @@ class ItemController extends Controller
     {
         $this->authorize('update', $item);
 
-        $item->update($request->validated());
+        $data = $request->validated();
+        $originalPrice = $item->price;
+        $item->update($data);
+
+        // Broadcast a general item update notification
+        event(new ItemNotification($item, "Item '{$item->name}' has been updated."));
+
+        // If price changed, broadcast price update to public channels
+        if (array_key_exists('price', $data) && (float) $originalPrice !== (float) $item->price) {
+            event(new ItemPriceUpdated($item));
+        }
 
         return redirect()->route('cashier.items.index')->with('success', 'Item updated successfully.');
     }

@@ -1,4 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
+import SiteLayout from '@/layouts/site-layout';
 import { FormEvent } from 'react';
 
 type LoginForm = {
@@ -78,3 +79,6 @@ export default function CustomerLoginPage() {
         </>
     );
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(CustomerLoginPage as any).layout = (page: React.ReactNode) => <SiteLayout>{page}</SiteLayout>;

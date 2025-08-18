@@ -1,4 +1,4 @@
-import Header from '@/components/header';
+import SiteLayout from '@/layouts/site-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
@@ -48,7 +48,6 @@ export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
     return (
         <>
             <Head title="My Orders" />
-            <Header />
             <div className="container mx-auto max-w-4xl px-4 py-6">
                 <div className="mb-6">
                     <Button variant="outline" size="sm" asChild>
@@ -163,6 +162,9 @@ export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
                     <PaginationFromLaravel links={orders.links ?? []} onNavigate={handleNavigate} />
                 </div>
             </div>
-        </>
+    </>
     )
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(OrdersIndex as any).layout = (page: React.ReactNode) => <SiteLayout>{page}</SiteLayout>;

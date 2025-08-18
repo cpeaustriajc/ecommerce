@@ -1,4 +1,4 @@
-import Header from '@/components/header';
+import SiteLayout from '@/layouts/site-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -26,7 +26,6 @@ export default function OrderShow({ order }: { order: Order }) {
     return (
         <>
             <Head title={`Order #${order.id}`} />
-            <Header />
             <div className="container mx-auto max-w-4xl px-4 py-6">
                 <div className="mb-6">
                     <Button variant="outline" size="sm" asChild>
@@ -64,9 +63,12 @@ export default function OrderShow({ order }: { order: Order }) {
                     </CardContent>
                 </Card>
             </div>
-        </>
+    </>
     );
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(OrderShow as any).layout = (page: React.ReactNode) => <SiteLayout>{page}</SiteLayout>;
 
 function OrderItemCard({ orderId, item, index, totalItems }: { orderId: number; item: Order['items'][number]; index: number; totalItems: number }) {
     const { data, setData, put, processing } = useForm({ itemId: item.id, quantity: item.quantity });

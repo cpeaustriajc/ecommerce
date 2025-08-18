@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -34,6 +35,16 @@ class StorefrontController extends Controller
 
     public function show(Item $item): Response
     {
-        return Inertia::render('items/show', compact('item'));
+        $customer = Auth::guard('customer')->user();
+
+        $isSubscribed = false;
+        if ($customer) {
+            $isSubscribed = $customer->subscribedItems()->whereKey($item->id)->exists();
+        }
+
+        return Inertia::render('items/show', [
+            'item' => $item,
+            'isSubscribed' => $isSubscribed,
+        ]);
     }
 }

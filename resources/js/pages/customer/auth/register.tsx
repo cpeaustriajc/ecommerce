@@ -1,4 +1,5 @@
 import { Head, useForm } from '@inertiajs/react';
+import SiteLayout from '@/layouts/site-layout';
 import { FormEvent } from 'react';
 
 type RegisterForm = {
@@ -107,3 +108,6 @@ export default function CustomerRegisterPage() {
         </>
     );
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(CustomerRegisterPage as any).layout = (page: React.ReactNode) => <SiteLayout>{page}</SiteLayout>;

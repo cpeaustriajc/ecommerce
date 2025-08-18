@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Policies\CustomerPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -52,5 +53,14 @@ class Customer extends Authenticatable
     public function orders()
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * Items this customer is subscribed to.
+     */
+    public function subscribedItems(): BelongsToMany
+    {
+        return $this->belongsToMany(Item::class, 'item_subscription')
+            ->withTimestamps();
     }
 }

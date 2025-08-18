@@ -6,6 +6,7 @@ use App\Policies\ItemPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 #[UsePolicy(ItemPolicy::class)]
 class Item extends Model
@@ -23,6 +24,15 @@ class Item extends Model
     {
         return $this->belongsToMany(Order::class, 'order_item')
             ->withPivot(['quantity', 'price'])
+            ->withTimestamps();
+    }
+
+    /**
+     * Customers subscribed to this item.
+     */
+    public function subscribers(): BelongsToMany
+    {
+        return $this->belongsToMany(Customer::class, 'item_subscription')
             ->withTimestamps();
     }
 }

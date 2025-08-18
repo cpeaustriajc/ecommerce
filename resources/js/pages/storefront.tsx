@@ -1,10 +1,12 @@
-import Header from '@/components/header';
+import SiteLayout from '@/layouts/site-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PaginationFromLaravel } from '@/components/ui/pagination';
 import { Item } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
+import { useEchoPublic } from '@laravel/echo-react';
 import { PackageIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface StorefrontProps {
     items: Item[];
@@ -13,10 +15,19 @@ interface StorefrontProps {
 }
 
 export default function StoreFront({ items, links }: StorefrontProps) {
+    const [localItems, setLocalItems] = useState<Item[]>(items);
+
+    useEchoPublic<{ item: { id: number; name: string; price: number } }>('items', '.ItemPriceUpdated', (e) => {
+        setLocalItems((prev) => prev.map((it) => (it.id === e.item.id ? { ...it, price: e.item.price } : it)));
+    });
+
+    useEffect(() => {
+        setLocalItems(items);
+    }, [items]);
+
     return (
         <>
             <Head title="Storefront" />
-            <Header />
             <div className="container mx-auto px-4 py-1">
                 <div className="container mx-auto px-4 py-2">
                     <div className="mb-1 text-center">
@@ -27,8 +38,8 @@ export default function StoreFront({ items, links }: StorefrontProps) {
                     </div>
                 </div>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-                    {items.length > 0 ? (
-                        items.map((item) => (
+                    {localItems.length > 0 ? (
+                        localItems.map((item) => (
                             <Card key={item.id} className="transition-shadow hover:shadow-lg">
                                 <CardHeader>
                                     <div className="mb-3 flex h-32 items-center justify-center rounded-md bg-muted">
@@ -56,7 +67,7 @@ export default function StoreFront({ items, links }: StorefrontProps) {
                     )}
                 </div>
 
-                <div className="mt-6 flex items-center justify-center">
+        <div className="mt-6 flex items-center justify-center">
                     <PaginationFromLaravel
                         links={links ?? []}
                         onNavigate={(url) => {
@@ -66,6 +77,10 @@ export default function StoreFront({ items, links }: StorefrontProps) {
                     />
                 </div>
             </div>
-        </>
+    </>
     );
 }
+
+// Persistent layout
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(StoreFront as any).layout = (page: React.ReactNode) => <SiteLayout>{page}</SiteLayout>;

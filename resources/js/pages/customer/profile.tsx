@@ -1,4 +1,4 @@
-import Header from '@/components/header';
+import SiteLayout from '@/layouts/site-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -22,7 +22,6 @@ export default function CustomerProfilePage({ customer }: { customer?: Customer 
     return (
         <>
             <Head title="Customer Profile" />
-            <Header />
             <div className="container mx-auto px-4 py-8">
                 <div className="mx-auto max-w-2xl">
                     <div className="mb-6">
@@ -87,6 +86,9 @@ export default function CustomerProfilePage({ customer }: { customer?: Customer 
                     </form>
                 </div>
             </div>
-        </>
+    </>
     );
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+(CustomerProfilePage as any).layout = (page: React.ReactNode) => <SiteLayout>{page}</SiteLayout>;
