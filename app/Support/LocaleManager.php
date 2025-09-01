@@ -14,8 +14,28 @@ class LocaleManager
         return [
             'en' => 'USD',
             'ph' => 'PHP',
+            'fil' => 'PHP',
+            'en_PH' => 'PHP',
+            'en_SG' => 'SGD',
             'sg' => 'SGD',
         ];
+    }
+
+    private function normalize(string $locale): array
+    {
+        $norm = str_replace('-', '_', strtolower($locale));
+
+        return match ($norm) {
+            'ph' => ['app' => 'fil', 'icu' => 'fil_PH'],
+            'fil' => ['app' => 'fil', 'icu' => 'fil_PH'],
+            'en_ph' => ['app' => 'en', 'icu' => 'en_PH'],
+            'sg' => ['app' => 'en', 'icu' => 'en_SG'],
+            'en_sg' => ['app' => 'en', 'icu' => 'en_SG'],
+            default => [
+                'app' => strtok($norm, '_') ?: 'en',
+                'icu' => $norm,
+            ],
+        };
     }
 
     public function resolveLocale(Request $request): string
@@ -23,30 +43,50 @@ class LocaleManager
         $userLocale = $request->user('customer')?->locale
             ?? $request->user('cashier')?->locale;
 
-        if (is_string($userLocale) && isset($this->supported()[$userLocale])) {
-            return $userLocale;
+        $map = $this->supported();
+
+        if (is_string($userLocale) && isset($map[strtolower($userLocale)])) {
+            return strtolower($userLocale);
         }
 
-        return $request->getPreferredLanguage(array_keys($this->supported()))
-            ?: config('app.locale', 'en');
+        $preferred = $request->getPreferredLanguage(array_keys($map));
+
+        return $preferred ? strtolower($preferred) : strtolower(config('app.locale', 'en'));
     }
 
-    public function currencyFor(string $locale): string
+    public function currencyFor(string $rawLocale): string
     {
-        return $this->supported()[$locale] ?? config('invoices.default_currency', 'USD');
+        $map = $this->supported();
+        $key = str_replace('-', '_', strtolower($rawLocale));
+
+        if (isset($map[$key])) {
+            return $map[$key];
+        }
+
+        if (str_contains($key, 'ph')) {
+            return 'PHP';
+        }
+        if (str_contains($key, 'sg')) {
+            return 'SGD';
+        }
+
+        return config('invoices.default_currency', 'USD');
     }
 
     public function apply(Request $request): void
     {
-        $locale = $this->resolveLocale($request);
-        $currency = $this->currencyFor($locale);
+        $raw = $this->resolveLocale($request);
+        $norm = $this->normalize($raw);
 
-        app()->setLocale($locale);
-        Number::useLocale($locale);
-        Number::useCurrency($currency);
+        $appLocale = $norm['app'];
+        $icuLocale = $norm['icu'];
+
+        app()->setLocale($appLocale);
+        Number::useLocale($icuLocale);
+        Number::useCurrency($this->currencyFor($raw));
 
         if (class_exists(Carbon::class)) {
-            Carbon::setLocale($locale);
+            Carbon::setLocale($appLocale);
         }
     }
 }
