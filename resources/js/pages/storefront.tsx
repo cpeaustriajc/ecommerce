@@ -1,7 +1,7 @@
-import SiteLayout from '@/layouts/site-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { PaginationFromLaravel } from '@/components/ui/pagination';
+import SiteLayout from '@/layouts/site-layout';
 import { Item } from '@/types';
 import { Head, Link, router } from '@inertiajs/react';
 import { useEchoPublic } from '@laravel/echo-react';
@@ -67,7 +67,7 @@ export default function StoreFront({ items, links }: StorefrontProps) {
                     )}
                 </div>
 
-        <div className="mt-6 flex items-center justify-center">
+                <div className="mt-6 flex items-center justify-center">
                     <PaginationFromLaravel
                         links={links ?? []}
                         onNavigate={(url) => {
@@ -77,7 +77,7 @@ export default function StoreFront({ items, links }: StorefrontProps) {
                     />
                 </div>
             </div>
-    </>
+        </>
     );
 }
 

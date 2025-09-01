@@ -1,7 +1,7 @@
 import Header from '@/components/header';
+import { NotificationsProvider } from '@/lib/notifications-context';
 import { usePage } from '@inertiajs/react';
 import * as React from 'react';
-import { NotificationsProvider } from '@/lib/notifications-context';
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
     const page = usePage<{ auth?: { customer?: { id: number } | null } }>();

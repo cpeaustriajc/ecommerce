@@ -1,5 +1,5 @@
-import { Head, useForm } from '@inertiajs/react';
 import SiteLayout from '@/layouts/site-layout';
+import { Head, useForm } from '@inertiajs/react';
 import { FormEvent } from 'react';
 
 type RegisterForm = {

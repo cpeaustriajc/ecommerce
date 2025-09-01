@@ -1,49 +1,41 @@
-import SiteLayout from '@/layouts/site-layout';
+import { Badge, getItemIcon, getStatusIcon, getStatusVariant } from '@/components/orders/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Link, router, useForm, Head } from '@inertiajs/react';
-import { ArrowLeftIcon, CalendarIcon, CreditCardIcon, Eye, PackageIcon, XCircleIcon } from 'lucide-react';
-import React from 'react'
-import { getStatusIcon, getStatusVariant, getItemIcon, Badge } from '@/components/orders/utils';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { PaginationFromLaravel } from '@/components/ui/pagination';
-import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogFooter,
-    DialogTitle,
-    DialogDescription,
-
-} from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import SiteLayout from '@/layouts/site-layout';
+import { Head, Link, router, useForm } from '@inertiajs/react';
+import { ArrowLeftIcon, CalendarIcon, CreditCardIcon, Eye, PackageIcon, XCircleIcon } from 'lucide-react';
+import React from 'react';
 
 type OrderListItem = {
-    id: number | string
-    status: string
-    total: number
-    created_at: string
+    id: number | string;
+    status: string;
+    total: number;
+    created_at: string;
     items?: Array<{
-        id: number | string
-        name?: string
-        pivot: { quantity: number; price: number }
-    }>
-}
+        id: number | string;
+        name?: string;
+        pivot: { quantity: number; price: number };
+    }>;
+};
 
 type PaginatedOrders = {
-    data: Array<OrderListItem>
-    links?: { url: string | null; label: string; active: boolean }[]
-    meta?: { current_page?: number; last_page?: number; per_page?: number; total?: number }
-}
+    data: Array<OrderListItem>;
+    links?: { url: string | null; label: string; active: boolean }[];
+    meta?: { current_page?: number; last_page?: number; per_page?: number; total?: number };
+};
 
 export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
-    const { delete: destroy, processing: deleting } = useForm()
-    const [deleteOpen, setDeleteOpen] = React.useState(false)
-    const [selectedOrderId, setSelectedOrderId] = React.useState<number | string | null>(null)
+    const { delete: destroy, processing: deleting } = useForm();
+    const [deleteOpen, setDeleteOpen] = React.useState(false);
+    const [selectedOrderId, setSelectedOrderId] = React.useState<number | string | null>(null);
 
     const handleNavigate = (url?: string | null) => {
-        if (!url) return
-        router.visit(url, { preserveState: true, preserveScroll: true })
-    }
+        if (!url) return;
+        router.visit(url, { preserveState: true, preserveScroll: true });
+    };
 
     return (
         <>
@@ -83,8 +75,8 @@ export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
                                                 variant="destructive"
                                                 size="sm"
                                                 onClick={() => {
-                                                    setSelectedOrderId(order.id)
-                                                    setDeleteOpen(true)
+                                                    setSelectedOrderId(order.id);
+                                                    setDeleteOpen(true);
                                                 }}
                                             >
                                                 <XCircleIcon className="size-4" />
@@ -100,15 +92,17 @@ export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
                                                         </DialogDescription>
                                                     </DialogHeader>
                                                     <DialogFooter>
-                                                        <Button variant="outline" onClick={() => setDeleteOpen(false)}>Cancel</Button>
+                                                        <Button variant="outline" onClick={() => setDeleteOpen(false)}>
+                                                            Cancel
+                                                        </Button>
                                                         <Button
                                                             variant="destructive"
                                                             onClick={() => {
-                                                                if (!selectedOrderId) return
+                                                                if (!selectedOrderId) return;
                                                                 destroy(route('customer.orders.destroy', selectedOrderId), {
                                                                     preserveState: false,
                                                                     onSuccess: () => setDeleteOpen(false),
-                                                                })
+                                                                });
                                                             }}
                                                             disabled={deleting}
                                                         >
@@ -162,8 +156,8 @@ export default function OrdersIndex({ orders }: { orders: PaginatedOrders }) {
                     <PaginationFromLaravel links={orders.links ?? []} onNavigate={handleNavigate} />
                 </div>
             </div>
-    </>
-    )
+        </>
+    );
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

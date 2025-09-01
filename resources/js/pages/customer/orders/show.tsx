@@ -1,12 +1,12 @@
-import SiteLayout from '@/layouts/site-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import SiteLayout from '@/layouts/site-layout';
 import { cn } from '@/lib/utils';
 import { Order } from '@/types';
-import { Link, useForm, Head } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeftIcon, Package } from 'lucide-react';
 
 const getStatusColor = (status: Order['status']) => {
@@ -63,7 +63,7 @@ export default function OrderShow({ order }: { order: Order }) {
                     </CardContent>
                 </Card>
             </div>
-    </>
+        </>
     );
 }
 

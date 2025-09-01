@@ -1,3 +1,4 @@
+import { ItemNotification as CtxNotification, useNotifications } from '@/lib/notifications-context';
 import { SharedData } from '@/types';
 import { Link, usePage } from '@inertiajs/react';
 import { useEcho } from '@laravel/echo-react';
@@ -16,7 +17,6 @@ import {
 } from './ui/dropdown-menu';
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover';
 import { Separator } from './ui/separator';
-import { useNotifications, ItemNotification as CtxNotification } from '@/lib/notifications-context';
 
 type ItemNotification = CtxNotification;
 
@@ -44,10 +44,10 @@ function CustomerNotifications({ customerId }: { customerId: number }) {
                     <Badge className="absolute -top-2 left-full min-w-5 -translate-x-1/2 px-1">{unreadCount > 99 ? '99+' : unreadCount}</Badge>
                 </Button>
             </PopoverTrigger>
-        <PopoverContent align="end">
+            <PopoverContent align="end">
                 <div className="flex w-64 items-baseline justify-between gap-2">
                     <h3 className="text-sm font-semibold">Notifications</h3>
-            <Button variant="ghost" size="sm" onClick={markAllRead}>
+                    <Button variant="ghost" size="sm" onClick={markAllRead}>
                         Mark all as read
                     </Button>
                 </div>
@@ -57,14 +57,14 @@ function CustomerNotifications({ customerId }: { customerId: number }) {
                         <div
                             key={notification.id}
                             className="rounded-md px-3 py-2 text-sm transition-colors hover:bg-accent"
-                onClick={() => markRead(notification.id)}
+                            onClick={() => markRead(notification.id)}
                         >
                             <div className="relative flex items-start pe-3">
                                 <div className="flex-1 space-y-1">
                                     <Link
                                         className="text-left text-foreground/80 after:absolute after:inset-0"
                                         href={`/items/${notification.item.id}`}
-                    onClick={() => markRead(notification.id)}
+                                        onClick={() => markRead(notification.id)}
                                     >
                                         <span className="font-medium hover:underline">{notification.message}</span>
                                     </Link>

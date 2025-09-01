@@ -1,10 +1,10 @@
-import SiteLayout from '@/layouts/site-layout';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import SiteLayout from '@/layouts/site-layout';
 import { Customer } from '@/types';
-import { Link, useForm, Head } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeftIcon, AtSignIcon, SaveIcon } from 'lucide-react';
 
 export default function CustomerProfilePage({ customer }: { customer?: Customer }) {
@@ -64,7 +64,7 @@ export default function CustomerProfilePage({ customer }: { customer?: Customer 
                                                 onChange={(e) => setData('email', e.target.value)}
                                                 aria-invalid={errors.email ? 'true' : 'false'}
                                             />
-                                            <div className="pointer-events-none h-9 absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50 peer-aria-invalid:text-destructive">
+                                            <div className="pointer-events-none absolute inset-y-0 start-0 flex h-9 items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50 peer-aria-invalid:text-destructive">
                                                 <AtSignIcon size={16} aria-hidden="true" />
                                             </div>
                                             {errors.email && (
@@ -86,7 +86,7 @@ export default function CustomerProfilePage({ customer }: { customer?: Customer 
                     </form>
                 </div>
             </div>
-    </>
+        </>
     );
 }
 

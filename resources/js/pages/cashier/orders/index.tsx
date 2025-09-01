@@ -3,13 +3,12 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { PaginationFromLaravel } from '@/components/ui/pagination';
 import { TableHead, TableRow } from '@/components/ui/table';
+import DashboardLayout from '@/layouts/dashboard-layout';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import { ArrowUpDown, Search } from 'lucide-react';
+import { useState } from 'react';
 import { columns } from './columns';
 import DataTable from './data-table';
-import { ArrowUpDown } from 'lucide-react';
-import DashboardLayout from '@/layouts/dashboard-layout';
-import { Link, router, usePage, Head } from '@inertiajs/react';
-import { Search } from 'lucide-react';
-import { useState } from 'react';
 
 type OrderStatus = 'pending' | 'completed' | 'cancelled';
 
@@ -31,7 +30,13 @@ type Pagination<T> = {
     links: { url: string | null; label: string; active: boolean }[];
 };
 
-export default function CashierOrdersIndex({ orders, filters }: { orders: Pagination<OrderListItem>; filters?: { q?: string; sort?: string; direction?: string } }) {
+export default function CashierOrdersIndex({
+    orders,
+    filters,
+}: {
+    orders: Pagination<OrderListItem>;
+    filters?: { q?: string; sort?: string; direction?: string };
+}) {
     const page = usePage();
     const currentUrl = page.url || window.location.pathname;
     const [searchTerm, setSearchTerm] = useState(filters?.q ?? '');
@@ -91,7 +96,11 @@ export default function CashierOrdersIndex({ orders, filters }: { orders: Pagina
                                                     const sort = 'total';
                                                     let direction = 'asc';
                                                     if (filters?.sort === sort && filters?.direction === 'asc') direction = 'desc';
-                                                    router.get(currentUrl, { q: searchTerm, sort, direction }, { preserveState: true, replace: true });
+                                                    router.get(
+                                                        currentUrl,
+                                                        { q: searchTerm, sort, direction },
+                                                        { preserveState: true, replace: true },
+                                                    );
                                                 }}
                                             >
                                                 Total
@@ -107,7 +116,11 @@ export default function CashierOrdersIndex({ orders, filters }: { orders: Pagina
                                                     const sort = 'created_at';
                                                     let direction = 'asc';
                                                     if (filters?.sort === sort && filters?.direction === 'asc') direction = 'desc';
-                                                    router.get(currentUrl, { q: searchTerm, sort, direction }, { preserveState: true, replace: true });
+                                                    router.get(
+                                                        currentUrl,
+                                                        { q: searchTerm, sort, direction },
+                                                        { preserveState: true, replace: true },
+                                                    );
                                                 }}
                                             >
                                                 Created

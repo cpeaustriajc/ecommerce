@@ -1,7 +1,7 @@
-import SiteLayout from '@/layouts/site-layout';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import SiteLayout from '@/layouts/site-layout';
 import { Item } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useEchoPublic } from '@laravel/echo-react';
@@ -85,7 +85,7 @@ export default function ShowItemPage({ item, isSubscribed }: { item: Item; isSub
                     </CardContent>
                 </Card>
             </div>
-    </>
+        </>
     );
 }
 

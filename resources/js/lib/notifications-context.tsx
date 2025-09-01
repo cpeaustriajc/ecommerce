@@ -62,7 +62,7 @@ export function NotificationsProvider({ children, storageKey }: ProviderProps) {
 
     const value = React.useMemo(
         () => ({ notifications, unreadCount, add, markAllRead, markRead }),
-        [notifications, unreadCount, add, markAllRead, markRead]
+        [notifications, unreadCount, add, markAllRead, markRead],
     );
 
     return <NotificationsContext.Provider value={value}>{children}</NotificationsContext.Provider>;

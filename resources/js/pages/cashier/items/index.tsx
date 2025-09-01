@@ -5,7 +5,7 @@ import { PaginationFromLaravel } from '@/components/ui/pagination';
 import { TableHead, TableRow } from '@/components/ui/table';
 import DashboardLayout from '@/layouts/dashboard-layout';
 import { Item } from '@/types';
-import { Link, router, usePage, Head } from '@inertiajs/react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
 import { ArrowUpDown, Package, Plus, Search } from 'lucide-react';
 import { useState } from 'react';
 import { columns } from './columns';

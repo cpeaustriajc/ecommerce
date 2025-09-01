@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Separator } from '@/components/ui/separator';
 import DashboardLayout from '@/layouts/dashboard-layout';
-import { Link, useForm, Head } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Package, Plus, ShoppingCart, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 

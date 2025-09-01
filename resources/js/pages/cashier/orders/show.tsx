@@ -1,8 +1,8 @@
-import { Link, Head } from '@inertiajs/react';
-import DashboardLayout from '@/layouts/dashboard-layout';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import DashboardLayout from '@/layouts/dashboard-layout';
+import { Head, Link } from '@inertiajs/react';
 import { ArrowLeftIcon } from 'lucide-react';
 
 export default function CashierOrdersShow({
@@ -27,7 +27,7 @@ export default function CashierOrdersShow({
                         <div className="flex-shrink-0">
                             <Button asChild size="sm">
                                 <Link href="/cashier/orders" className="flex items-center gap-2">
-                                    <ArrowLeftIcon className="w-4 h-4" />
+                                    <ArrowLeftIcon className="h-4 w-4" />
                                     Back
                                 </Link>
                             </Button>
@@ -42,7 +42,7 @@ export default function CashierOrdersShow({
                     </Button>
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-3 mb-6">
+                <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-3">
                     <Card>
                         <CardHeader>
                             <CardTitle>Status</CardTitle>
