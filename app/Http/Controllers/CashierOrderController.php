@@ -27,7 +27,7 @@ class CashierOrderController extends Controller
             ->with([
                 'customer:id,name',
                 'cashier:id,name',
-                'items' => fn(BelongsToMany $q) => $q
+                'items' => fn (BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
@@ -40,8 +40,8 @@ class CashierOrderController extends Controller
                 }
 
                 $builder->orWhere('status', 'like', "%{$q}%");
-                $builder->orWhereHas('customer', fn($b) => $b->where('name', 'like', "%{$q}%"));
-                $builder->orWhereHas('cashier', fn($b) => $b->where('name', 'like', "%{$q}%"));
+                $builder->orWhereHas('customer', fn ($b) => $b->where('name', 'like', "%{$q}%"));
+                $builder->orWhereHas('cashier', fn ($b) => $b->where('name', 'like', "%{$q}%"));
             });
         }
 
@@ -112,7 +112,7 @@ class CashierOrderController extends Controller
         $order->load([
             'customer:id,name',
             'cashier:id,name',
-            'items' => fn(BelongsToMany $q) => $q
+            'items' => fn (BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
                 ->withPivot(['quantity', 'price']),
         ]);
@@ -125,7 +125,7 @@ class CashierOrderController extends Controller
                 'created_at' => $order->created_at?->toISOString(),
                 'customer' => $order->customer?->only(['id', 'name']),
                 'cashier' => $order->cashier?->only(['id', 'name']),
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
@@ -140,7 +140,7 @@ class CashierOrderController extends Controller
     {
         $this->authorize('update', $order);
         $order->load([
-            'items' => fn(BelongsToMany $q) => $q
+            'items' => fn (BelongsToMany $q) => $q
                 ->select(['items.id', 'items.name', 'items.price'])
                 ->withPivot(['quantity', 'price']),
         ]);
@@ -150,7 +150,7 @@ class CashierOrderController extends Controller
                 'id' => $order->id,
                 'status' => $order->status,
                 'total' => (float) $order->total,
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,

@@ -47,7 +47,7 @@ class HandleInertiaRequests extends Middleware
             ],
             'locale' => app()->getLocale(),
             'currency' => Number::defaultCurrency(),
-            'ziggy' => fn(): array => [
+            'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],

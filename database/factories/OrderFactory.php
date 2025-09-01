@@ -22,8 +22,8 @@ class OrderFactory extends Factory
     public function definition(): array
     {
         return [
-                'customer_id' => Customer::query()->inRandomOrder()->value('id') ?: Customer::factory()->create()->id,
-                'cashier_id' => Cashier::query()->inRandomOrder()->value('id') ?: Cashier::factory()->create()->id,
+            'customer_id' => Customer::query()->inRandomOrder()->value('id') ?: Customer::factory()->create()->id,
+            'cashier_id' => Cashier::query()->inRandomOrder()->value('id') ?: Cashier::factory()->create()->id,
             'status' => $this->faker->randomElement(array_column(OrderStatus::cases(), 'value')),
             'total' => $this->faker->randomFloat(2, 10, 1000), // Random total between 10 and 1000
             'created_at' => $this->faker->dateTimeBetween('-3 months', 'now'),
