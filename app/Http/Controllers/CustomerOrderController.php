@@ -26,7 +26,7 @@ class CustomerOrderController extends Controller
         $orders = Order::query()
             ->where('customer_id', $customer->id)
             ->with([
-                'items' => fn(BelongsToMany $q) => $q
+                'items' => fn (BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
@@ -43,7 +43,7 @@ class CustomerOrderController extends Controller
     {
         $this->authorize('view', $order);
         $order->load([
-            'items' => fn(BelongsToMany $q) => $q->select([
+            'items' => fn (BelongsToMany $q) => $q->select([
                 'items.id',
                 'items.name',
                 'items.price',
@@ -56,7 +56,7 @@ class CustomerOrderController extends Controller
                 'status' => $order->status,
                 'total' => (float) $order->total,
                 'created_at' => $order->created_at,
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
