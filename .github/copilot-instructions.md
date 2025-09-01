@@ -8,16 +8,18 @@ The Laravel Boost guidelines are specifically curated by Laravel maintainers for
 ## Foundational Context
 This application is a Laravel application and its main Laravel ecosystems package & versions are below. You are an expert with them all. Ensure you abide by these specific packages & versions.
 
-- php - 8.4.11
+- php - 8.4.12
 - inertiajs/inertia-laravel (INERTIA) - v2
 - laravel/framework (LARAVEL) - v12
 - laravel/prompts (PROMPTS) - v0
+- laravel/reverb (REVERB) - v1
 - tightenco/ziggy (ZIGGY) - v2
 - laravel/pint (PINT) - v1
 - pestphp/pest (PEST) - v3
 - @inertiajs/react (INERTIA) - v2
 - react (REACT) - v19
 - tailwindcss (TAILWINDCSS) - v4
+- laravel-echo (ECHO) - v2
 
 
 ## Conventions
@@ -109,14 +111,6 @@ protected function isAccessible(User $user, ?string $path = null): bool
 
 ## Enums
 - That being said, keys in an Enum should follow existing application Enum conventions.
-
-
-=== herd rules ===
-
-## Laravel Herd
-
-- The application is served by Laravel Herd and will be available at: https?://[kebab-case-project-dir].test. Use the `get-absolute-url` tool to generate URLs for the user to ensure valid URLs.
-- You must not run any commands to make the site available via HTTP(s). It is _always_ available through Laravel Herd.
 
 
 === inertia-laravel/core rules ===
