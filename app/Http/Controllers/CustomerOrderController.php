@@ -5,19 +5,13 @@ namespace App\Http\Controllers;
 use App\Enums\OrderStatus;
 use App\Http\Requests\StoreCustomerOrderRequest;
 use App\Http\Requests\UpdateCustomerOrderRequest;
-use App\Mail\OrderReceipt;
 use App\Models\Item;
 use App\Models\Order;
 use App\Support\InvoiceBuilder;
 use App\Support\OrderBuilder;
-use Brick\Money\Money;
-use Elegantly\Invoices\Models\Invoice as InvoiceModel;
-use Elegantly\Invoices\Models\InvoiceItem as InvoiceItemModel;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,7 +24,7 @@ class CustomerOrderController extends Controller
         $orders = Order::query()
             ->where('customer_id', $customer->id)
             ->with([
-                'items' => fn(BelongsToMany $q) => $q
+                'items' => fn (BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
@@ -47,7 +41,7 @@ class CustomerOrderController extends Controller
     {
         $this->authorize('view', $order);
         $order->load([
-            'items' => fn(BelongsToMany $q) => $q->select([
+            'items' => fn (BelongsToMany $q) => $q->select([
                 'items.id',
                 'items.name',
                 'items.price',
@@ -60,7 +54,7 @@ class CustomerOrderController extends Controller
                 'status' => $order->status,
                 'total' => (float) $order->total,
                 'created_at' => $order->created_at,
-                'items' => $order->items->map(fn(Item $item) => [
+                'items' => $order->items->map(fn (Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,

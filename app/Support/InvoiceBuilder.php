@@ -10,7 +10,6 @@ use Elegantly\Invoices\Models\Invoice as InvoiceModel;
 use Elegantly\Invoices\Models\InvoiceItem as InvoiceItemModel;
 use InvalidArgumentException;
 
-
 /**
  * Fluent builder for creating Invoices and lines.
  *
@@ -28,14 +27,16 @@ class InvoiceBuilder
 {
     public function __construct(
         private LocaleManager $locales,
-    ) {
-    }
+    ) {}
 
     protected ?Order $order = null;
+
     protected ?Customer $buyer = null;
+
     protected ?string $locale = null;
 
     protected ?string $serialPrefix = null;
+
     protected string|int|null $serialSerie = null;
 
     /** @var list<array{item: Item, quantity: int, unit_price: float}> */
@@ -44,12 +45,14 @@ class InvoiceBuilder
     public function setInvoiceable(Order $order): self
     {
         $this->order = $order;
+
         return $this;
     }
 
     public function setBuyer(Customer $buyer): self
     {
         $this->buyer = $buyer;
+
         return $this;
     }
 
@@ -57,6 +60,7 @@ class InvoiceBuilder
     public function withLocale(?string $locale): self
     {
         $this->locale = $locale;
+
         return $this;
     }
 
@@ -64,13 +68,14 @@ class InvoiceBuilder
     {
         $this->serialPrefix = $prefix;
         $this->serialSerie = $serie;
+
         return $this;
     }
 
     public function addItem(Item $item, int $quantity, ?float $unitPrice = null): self
     {
         if ($quantity <= 0) {
-            throw new InvalidArgumentException("Quantity must be a positive integer.");
+            throw new InvalidArgumentException('Quantity must be a positive integer.');
         }
 
         $this->lines[] = [
@@ -85,11 +90,11 @@ class InvoiceBuilder
     public function create(): InvoiceModel
     {
         if ($this->order === null) {
-            throw new InvalidArgumentException("Invoiceable order is required.");
+            throw new InvalidArgumentException('Invoiceable order is required.');
         }
 
         if ($this->buyer === null) {
-            throw new InvalidArgumentException("Buyer is required.");
+            throw new InvalidArgumentException('Buyer is required.');
         }
 
         $this->applyLocaleContext();
@@ -103,7 +108,7 @@ class InvoiceBuilder
                 'name' => $this->buyer->name,
                 'email' => $this->buyer->email,
             ],
-            'description' => 'Order #' . $this->order->id,
+            'description' => 'Order #'.$this->order->id,
             'due_at' => now(),
         ]);
 
@@ -138,12 +143,14 @@ class InvoiceBuilder
     {
         if (is_string($this->locale)) {
             $this->locales->applyFromLocale($this->locale);
+
             return;
         }
 
         $buyerLocale = method_exists($this->buyer, 'locale') ? (string) ($this->buyer->locale ?? '') : '';
         if ($buyerLocale !== '') {
             $this->locales->applyFromLocale($buyerLocale);
+
             return;
         }
     }
@@ -156,6 +163,7 @@ class InvoiceBuilder
         $this->serialPrefix = null;
         $this->serialSerie = null;
         $this->lines = [];
+
         return $this;
     }
 }

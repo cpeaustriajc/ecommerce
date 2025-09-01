@@ -26,7 +26,9 @@ use InvalidArgumentException;
 class OrderBuilder
 {
     protected ?Customer $customer = null;
+
     protected ?Cashier $cashier = null;
+
     protected ?OrderStatus $status = null;
 
     /** @var array<int, array{quantity:int, price:float}> */
@@ -35,23 +37,26 @@ class OrderBuilder
     public function forCustomer(Customer $customer): self
     {
         $this->customer = $customer;
+
         return $this;
     }
 
     public function byCashier(?Cashier $cashier): self
     {
         $this->cashier = $cashier;
+
         return $this;
     }
 
     public function withStatus(OrderStatus $status): self
     {
         $this->status = $status;
+
         return $this;
     }
 
     /**
-     * @param Item|int $item Item model or Item ID
+     * @param  Item|int  $item  Item model or Item ID
      */
     public function addItem(Item|int $item, int $quantity, ?float $unitPrice = null): self
     {
