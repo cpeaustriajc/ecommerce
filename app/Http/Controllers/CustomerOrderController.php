@@ -8,6 +8,8 @@ use App\Http\Requests\UpdateCustomerOrderRequest;
 use App\Mail\OrderReceipt;
 use App\Models\Item;
 use App\Models\Order;
+use App\Support\InvoiceBuilder;
+use App\Support\OrderBuilder;
 use Brick\Money\Money;
 use Elegantly\Invoices\Models\Invoice as InvoiceModel;
 use Elegantly\Invoices\Models\InvoiceItem as InvoiceItemModel;
@@ -28,7 +30,7 @@ class CustomerOrderController extends Controller
         $orders = Order::query()
             ->where('customer_id', $customer->id)
             ->with([
-                'items' => fn (BelongsToMany $q) => $q
+                'items' => fn(BelongsToMany $q) => $q
                     ->select(['items.id', 'items.name', 'items.price'])
                     ->withPivot(['quantity', 'price']),
             ])
@@ -45,7 +47,7 @@ class CustomerOrderController extends Controller
     {
         $this->authorize('view', $order);
         $order->load([
-            'items' => fn (BelongsToMany $q) => $q->select([
+            'items' => fn(BelongsToMany $q) => $q->select([
                 'items.id',
                 'items.name',
                 'items.price',
@@ -58,7 +60,7 @@ class CustomerOrderController extends Controller
                 'status' => $order->status,
                 'total' => (float) $order->total,
                 'created_at' => $order->created_at,
-                'items' => $order->items->map(fn (Item $item) => [
+                'items' => $order->items->map(fn(Item $item) => [
                     'id' => $item->id,
                     'name' => $item->name,
                     'price' => (float) $item->pivot->price,
@@ -69,80 +71,26 @@ class CustomerOrderController extends Controller
         ]);
     }
 
-    public function store(StoreCustomerOrderRequest $request): RedirectResponse
+    public function store(StoreCustomerOrderRequest $request, OrderBuilder $orders, InvoiceBuilder $invoices): RedirectResponse
     {
         $this->authorize('create', Order::class);
         $customer = $request->user('customer');
-
-        $item = Item::query()->findOrFail($request->validated('itemId'));
+        $item = Item::findOrFail((int) $request->validated('itemId'));
         $quantity = (int) $request->validated('quantity');
 
-        $order = null;
-        DB::transaction(function () use ($customer, $item, $quantity, &$order) {
-            $order = Order::create([
-                'customer_id' => $customer->id,
-                'cashier_id' => null,
-                'status' => OrderStatus::Pending,
-                'total' => 0,
-            ]);
+        $order = $orders
+            ->forCustomer($customer)
+            ->byCashier(null)
+            ->withStatus(OrderStatus::Pending)
+            ->addItem($item, $quantity)
+            ->create();
 
-            $order->items()->attach([
-                $item->id => [
-                    'quantity' => $quantity,
-                    'price' => $item->price,
-                ],
-            ]);
-
-            $order->recalculateTotal();
-
-            // Create Invoice model for this order
-            /** @var InvoiceModel $invoice */
-            $invoice = new InvoiceModel([
-                'type' => 'invoice',
-                'state' => 'paid',
-                'state_set_at' => now(),
-                'seller_information' => config('invoices.default_seller'),
-                'buyer_information' => [
-                    'name' => $customer->name,
-                    'email' => $customer->email,
-                ],
-                'description' => 'Order #'.$order->id,
-                'due_at' => now(),
-            ]);
-
-            // Configure serial number series by customer id
-            $invoice->configureSerialNumber(prefix: 'ORD', serie: $customer->id);
-
-            $invoice->buyer()->associate($customer);
-            $invoice->invoiceable()->associate($order);
-            $invoice->save();
-
-            // Add invoice item(s) mirroring order items
-            $invoice->items()->saveMany([
-                new InvoiceItemModel([
-                    'label' => $item->name,
-                    'description' => $item->description,
-                    'unit_price' => Money::of((float) $item->price, config('invoices.default_currency', 'USD')),
-                    'tax_percentage' => 0.0,
-                    'quantity' => $quantity,
-                ]),
-            ]);
-
-            // Ensure denormalized totals are computed by the package
-            $invoice->refresh();
-        });
-        // Send receipt email with invoice attached
-        if ($order) {
-            /** @var InvoiceModel|null $invoiceForMail */
-            $invoiceForMail = InvoiceModel::where('invoiceable_type', Order::class)
-                ->where('invoiceable_id', $order->id)
-                ->latest('id')
-                ->first();
-
-            if ($invoiceForMail) {
-                Mail::to($customer->email)->send(new OrderReceipt($order, $invoiceForMail));
-            }
-        }
+        $invoice = $invoices
+            ->setInvoiceable($order)
+            ->setBuyer($customer)
+            ->setSerial('ORD', $customer->id)
+            ->addItem($item, $quantity)
+            ->create();
 
         return redirect()->route('customer.orders.index')
             ->with('success', 'Order created successfully.');

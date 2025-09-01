@@ -89,4 +89,23 @@ class LocaleManager
             Carbon::setLocale($appLocale);
         }
     }
+
+    public function applyFromLocale(string $locale): void
+    {
+        $locale = trim($locale);
+        if ($locale === '') {
+            $locale = config('app.locale', 'en');
+
+            $norm = $this->normalize($locale);
+            $appLocale = $norm['app'];
+            $icuLocale = $norm['icu'];
+
+            app()->setLocale($appLocale);
+            Number::useLocale($icuLocale);
+            Number::useCurrency($this->currencyFor($locale));
+            if (class_exists(Carbon::class)) {
+                Carbon::setLocale($appLocale);
+            }
+        }
+    }
 }
