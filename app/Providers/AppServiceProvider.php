@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Support\LocaleManager;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Http\Request;
@@ -14,7 +15,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(LocaleManager::class);
     }
 
     /**

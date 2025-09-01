@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Number;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
 
@@ -44,7 +45,9 @@ class HandleInertiaRequests extends Middleware
                 'customer' => Auth::guard('customer')->user(),
                 'cashier' => Auth::guard('cashier')->user(),
             ],
-            'ziggy' => fn (): array => [
+            'locale' => app()->getLocale(),
+            'currency' => Number::defaultCurrency(),
+            'ziggy' => fn(): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
             ],
